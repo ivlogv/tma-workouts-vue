@@ -1,0 +1,52 @@
+{
+  "name": "tma-workouts-vue",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "homepage": "https://ivlogv.github.io/tma-workouts-vue",
+  "scripts": {
+    "deploy": "gh-pages -d dist",
+    "dev": "vite",
+    "dev:https": "cross-env HTTPS=true vite",
+    "build": "run-p type-check \"build-only {@}\" --",
+    "preview": "vite preview",
+    "build-only": "vite build",
+    "type-check": "vue-tsc --build --force",
+    "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint . --report-unused-disable-directives --max-warnings 0 --fix"
+  },
+  "dependencies": {
+    "@tma.js/sdk-vue": "^1.0.15",
+    "@tonconnect/ui": "^2.3.1",
+    "axios": "^1.13.4",
+    "eruda": "^3.4.3",
+    "telegram-ui-vue": "^1.6.3",
+    "vue": "^3.5.26",
+    "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@tsconfig/node22": "^22.0.5",
+    "@types/node": "^25.0.8",
+    "@vicons/ionicons5": "^0.13.0",
+    "@vitejs/plugin-vue": "^6.0.3",
+    "@vue/eslint-config-typescript": "^14.6.0",
+    "@vue/tsconfig": "^0.8.1",
+    "cross-env": "^10.1.0",
+    "eslint": "^9.39.2",
+    "eslint-plugin-vue": "^10.6.2",
+    "gh-pages": "^6.3.0",
+    "naive-ui": "^2.43.2",
+    "npm-run-all2": "^8.0.4",
+    "typescript": "~5.9.3",
+    "vfonts": "^0.0.3",
+    "vite": "^7.3.1",
+    "vite-plugin-mkcert": "^1.17.9",
+    "vite-plugin-vue-devtools": "^8.0.5",
+    "vue-tsc": "^3.2.2"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
+}
