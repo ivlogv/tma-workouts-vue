@@ -14,6 +14,7 @@ import axios from "axios";
 import { retrieveRawInitData } from "@tma.js/sdk-vue";
 
 const message = ref('test')
+const data = ref('empty')
 const api = axios.create({
   baseURL: "http://localhost:8000/api",
 });
@@ -38,6 +39,24 @@ async function testLogin() {
     message.value = "Ошибка при запросе"
   }
 }
+
+async function testFetchData(){
+  if(!initDataRaw) {
+    message.value = "No init data";
+    return;
+  }
+  try {
+    const response = await api.get(
+      "/workouts/",
+      { headers: { Authorization: `tma ${initDataRaw}` } },
+    );
+    data.value = response.data  ;
+    console.log("Ответ сервера:", response.data);
+  } catch (error) {
+    console.error("Ошибка запроса:", error);
+    data.value = "Ошибка при запросе"
+  }
+}
 </script>
 
 <template>
@@ -46,7 +65,8 @@ async function testLogin() {
     <p>{{ message }}</p>
 
 
-
+    <n-button @click="testFetchData">Тест запроса</n-button>
+    <p>{{ data }}</p>
     <!-- <template #bottom>
       <BottomNav />
     </template> -->
