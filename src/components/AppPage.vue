@@ -13,9 +13,9 @@ defineProps<{ title: string, disclaimer?: string }>();
     </div>
 
     <!-- Bottom bar slot -->
-    <!-- <div v-if="$slots.bottom" class="page__bottom-bar">
+    <div v-if="$slots.bottom" class="page__bottom-bar">
       <slot name="bottom" />
-    </div> -->
+    </div>
   </div>
 </template>
 
@@ -51,22 +51,22 @@ defineProps<{ title: string, disclaimer?: string }>();
   flex-direction: column;
   gap: 12px;
   overflow-y: auto;
-  padding-bottom: 72px;
+  padding-bottom: 82px;
 }
 
 /* Bottom bar */
 .page__bottom-bar {
   position: fixed;
-  bottom: 8px;
-  left: 16px;
-  right: 16px;
+  bottom: 24px;
+  left: 8px;
+  right: 8px;
 
-  padding: 8px 16px;
+  padding: 4px 4px;
   background: var(--tg-theme-bg-color);
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
-  border-radius: 16px;
   display: flex;
   justify-content: center;
   align-items: center;
+
+  border-radius: 32px;
 }
 </style>

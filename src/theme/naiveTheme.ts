@@ -15,13 +15,17 @@ export function useNaiveTheme() {
       textColor2: tp.value.hint_color,
       cardColor: tp.value.bg_color,
       bodyColor: tp.value.secondary_bg_color,
-      borderColor: tp.value.hint_color
+      borderColor: tp.value.hint_color,
     },
 
     Button: {
       textColor: tp.value.button_text_color,
       colorHover: tp.value.button_color,
-      colorPressed: tp.value.button_color
+      textColorHover: tp.value.button_text_color,
+      colorPressed: tp.value.button_color,
+      borderRadiusSmall: '20px',
+      borderRadiusMedium: '8px',
+      borderRadiusLarge: '8px',
     },
 
     Input: {
