@@ -1,9 +1,27 @@
 <script setup lang="ts">
 import AppPage from "@/components/AppPage.vue";
 import BottomNav from "@/components/BottomNav.vue";
-// import { ref } from "vue";
+import StatsBlock from "@/components/StatsBlock.vue";
+
+import { ref } from "vue";
 // import axios from "axios";
+
+import { BarbellOutline, Body } from "@vicons/ionicons5";
+
 // import { retrieveRawInitData } from "@tma.js/sdk-vue";
+import RecentWorkouts from "@/components/RecentWorkouts.vue";
+// import { useRoute, useRouter } from 'vue-router'
+
+// const router = useRouter()
+// const route = useRoute()
+
+// function isActive(path: string) {
+//   return route.path === path
+// }
+
+// function navigate(path: string) {
+//   router.push(path)
+// }
 
 // const initDataRaw = retrieveRawInitData();
 
@@ -17,23 +35,41 @@ import BottomNav from "@/components/BottomNav.vue";
 
 // async function fetchData() {}
 
+const daysInRow = ref(42);
+const thisWeek = ref(5);
+
+const workouts = [
+  {
+    id: 1,
+    name: "Full Body Beginner",
+    date: "22.03.2026",
+    icon: BarbellOutline,
+  },
+  { id: 2, name: "Core Strength", date: "20.03.2026", icon: Body },
+  {
+    id: 3,
+    name: "Full Body Beginner",
+    date: "16.03.2026",
+    icon: BarbellOutline,
+  },
+];
+
+const selectedId = ref<number | undefined>(undefined);
+
+function toggleSelect(id: number) {
+  selectedId.value = selectedId.value === id ? undefined : id;
+}
 </script>
 
 <template>
-  <AppPage title="Home Page" :back="false">
-    <div class="card">
-      <n-flex justify="space-between">
-        <div class="stat">
-          <h2>0</h2>
-          <p class="title">Всего тренировок</p>
-        </div>
+  <AppPage title="" :back="false">
+    <StatsBlock :daysInRow="daysInRow" :thisWeek="thisWeek" />
 
-        <div class="stat">
-          <h2>0</h2>
-          <p class="title">Текущая серия</p>
-        </div>
-      </n-flex>
-    </div>
+    <RecentWorkouts
+      :workouts="workouts"
+      :selected-id="selectedId"
+      @select="toggleSelect"
+    />
 
     <template #bottom>
       <BottomNav />
@@ -43,24 +79,18 @@ import BottomNav from "@/components/BottomNav.vue";
 
 <style scoped>
 .card {
-  background-color: var(--tg-theme-bg-color);
-  border-radius: 16px;
-  padding: 8px;
+  background: var(--tg-theme-bg-color, #1c1c1c);
+  border-radius: 12px;
+  color: var(--tg-theme-text-color, #fff);
+  font-family: sans-serif;
 }
 
-.card__header {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-}
-
-.stat {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-left: auto;
-  margin-right: auto;
+.card__title {
+  color: var(--tg-theme-button-color, #fff);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 0.9;
+  margin: 16px 12px 12px 12px;
 }
 
 .title {
