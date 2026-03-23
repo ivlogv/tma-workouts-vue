@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import TestPage from "@/pages/TestPage.vue";
 import IndexPage from "@/pages/IndexPage.vue";
+import HistoryPage from "@/pages/HistoryPage.vue";
 // import InitDataPage from "@/pages/InitDataPage.vue";
 // import ThemeParamsPage from "@/pages/ThemeParamsPage.vue";
 // import LaunchParamsPage from "@/pages/LaunchParamsPage.vue";
@@ -19,7 +20,14 @@ export const routes = [
       title: "Test Page",
     },
   },
-
+  {
+    path: "/history",
+    name: "history",
+    component: HistoryPage,
+    meta: {
+      title: "History Page",
+    },
+  },
   // {
   //   path: "/init-data",
   //   name: "init-data",

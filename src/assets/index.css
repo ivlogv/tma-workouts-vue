@@ -1,3 +1,9 @@
+:root:root {
+  --van-button-primary-background: var(--tg-theme-button-color);
+  --van-button-primary-border-color: var(--tg-theme-button-color);
+  --van-button-radius: 8px;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Roboto', 'Oxygen',
   'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',

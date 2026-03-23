@@ -5,6 +5,10 @@ import vue from "@vitejs/plugin-vue";
 import vueDevTools from "vite-plugin-vue-devtools";
 import mkcert from "vite-plugin-mkcert";
 
+import AutoImport from 'unplugin-auto-import/vite';
+import Components from 'unplugin-vue-components/vite';
+import { VantResolver } from '@vant/auto-import-resolver';
+
 // https://vite.dev/config/
 export default defineConfig({
   base: "/tma-workouts-vue",
@@ -15,6 +19,13 @@ export default defineConfig({
     // Using this plugin requires admin rights on the first dev-mode launch.
     // https://www.npmjs.com/package/vite-plugin-mkcert
     process.env.HTTPS ? mkcert() : undefined,
+
+    AutoImport({
+      resolvers: [VantResolver()],
+    }),
+    Components({
+      resolvers: [VantResolver()],
+    }),
   ],
   resolve: {
     alias: {

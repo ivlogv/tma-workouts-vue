@@ -101,6 +101,7 @@ export async function init(options: {
   if (miniApp.mount.isAvailable()) {
     themeParams.mount();
     miniApp.mount();
+    miniApp.setHeaderColor('bg_color');
     themeParams.bindCssVars();
   }
 

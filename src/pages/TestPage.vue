@@ -55,7 +55,7 @@ async function testFetchData() {
     // const response2 = await api.get(`/exercises/`);
     // const exerciseId = response2.data[1].id; // Получаем ID первого упражнения из ответа
 
-    const response3 = await api.get(`/exercises/template/${templateId}`)
+    const response3 = await api.get(`/exercises/template/${templateId}`);
 
     data.value = response3.data; // Сохраняем ответ в переменную data
   } catch (error) {
@@ -70,7 +70,7 @@ async function testFetchData() {
     <n-button @click="testLogin" type="primary">Тест авторизации</n-button>
     <p>{{ message }}</p>
 
-    <n-button @click="testFetchData">Тест запроса</n-button>
+    <van-button type="primary" @click="testFetchData">Тест запроса</van-button>
     <p>{{ data }}</p>
 
     <template #bottom>
