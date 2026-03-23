@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Component } from 'vue'
-import { hapticFeedback } from '@tma.js/sdk';
+import { hapticFeedback } from '@tma.js/sdk-vue';
 
 interface Workout {
   id: number
