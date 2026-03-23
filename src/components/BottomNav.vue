@@ -66,7 +66,8 @@ function navigate(path: string) {
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  min-width: 80px;
+  min-width: 60px;
+  width: 100%;
 
   padding: 6px 2px;
   cursor: pointer;
