@@ -39,7 +39,7 @@ function ripple(e: MouseEvent) {
 function handleClick(e: MouseEvent, id: number) {
   // вибрация
   if(hapticFeedback.isSupported()) {
-    hapticFeedback.selectionChanged();
+    hapticFeedback.impactOccurred("light")
   }
 
   ripple(e)
