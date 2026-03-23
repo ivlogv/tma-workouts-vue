@@ -11,8 +11,9 @@ import { BarbellOutline, Body } from "@vicons/ionicons5";
 // import { retrieveRawInitData } from "@tma.js/sdk-vue";
 import RecentWorkouts from "@/components/RecentWorkouts.vue";
 // import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 
-// const router = useRouter()
+const router = useRouter()
 // const route = useRoute()
 
 // function isActive(path: string) {
@@ -59,6 +60,13 @@ const selectedId = ref<number | undefined>(undefined);
 function toggleSelect(id: number) {
   selectedId.value = selectedId.value === id ? undefined : id;
 }
+
+function handleStart() {
+  if (selectedId.value) {
+    // navigate to workout page
+    router.push('/workouts')
+  }
+}
 </script>
 
 <template>
@@ -70,6 +78,10 @@ function toggleSelect(id: number) {
       :selected-id="selectedId"
       @select="toggleSelect"
     />
+
+    <van-button type="primary" @click="handleStart">
+      {{selectedId ? 'Перейти к тренировке' : 'Выбрать тренировку'}}
+    </van-button>
 
     <template #bottom>
       <BottomNav />
