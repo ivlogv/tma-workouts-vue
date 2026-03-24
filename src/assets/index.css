@@ -2,6 +2,16 @@
   --van-button-primary-background: var(--tg-theme-button-color);
   --van-button-primary-border-color: var(--tg-theme-button-color);
   --van-button-radius: 8px;
+
+  --van-cell-group-background: var(--tg-theme-bg-color);
+  --van-cell-group-title-color: var(--tg-theme-accent-text-color);
+
+  --van-cell-background: var(--tg-theme-bg-color);
+  --van-cell-text-color: var(--tg-theme-text-color);
+  --van-cell-border-color: none;
+  --van-cell-font-size: 13px;
+  --van-cell-line-height: 1.5;
+  --van-cell-active-color: rgba(255,255,255, 0.1);
 }
 
 body {

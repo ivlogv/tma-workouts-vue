@@ -5,11 +5,13 @@ import { useRoute, useRouter } from 'vue-router'
 import {
   HomeOutline,
   TimeOutline,
-  PieChartOutline,
+  // PieChartOutline,
   SettingsOutline,
+  BarbellOutline,
+  Barbell,
   Home,
   Time,
-  PieChart,
+  // PieChart,
   Settings,
 } from '@vicons/ionicons5'
 
@@ -19,7 +21,8 @@ const route = useRoute()
 const items = [
   { label: 'Home', icon: HomeOutline, iconActive: Home, path: '/' },
   { label: 'History', icon: TimeOutline, iconActive: Time, path: '/history' },
-  { label: 'Analytics', icon: PieChartOutline, iconActive: PieChart, path: '/analytics' },
+  { label: 'Workouts', icon: BarbellOutline, iconActive: Barbell, path: '/workouts' },
+  // { label: 'Analytics', icon: PieChartOutline, iconActive: PieChart, path: '/analytics' },
   { label: 'Settings', icon: SettingsOutline, iconActive: Settings, path: '/test' }
 ]
 

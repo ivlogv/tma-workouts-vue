@@ -9,7 +9,9 @@ useBackButton();
 
 <template>
   <n-config-provider :theme-overrides="themeOverrides">
-    <RouterView />
+    <van-config-provider theme="dark">
+      <RouterView />
+    </van-config-provider>
   </n-config-provider>
 </template>
 

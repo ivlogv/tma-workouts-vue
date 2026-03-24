@@ -1,6 +1,7 @@
 import './assets/index.css';
 
 import naive from 'naive-ui'
+import { ConfigProvider } from 'vant';
 import { createApp } from 'vue';
 import { retrieveLaunchParams } from '@tma.js/sdk-vue';
 
@@ -30,6 +31,7 @@ init({
     const app = createApp(App);
     app.config.errorHandler = errorHandler;
     app.use(naive);
+    app.use(ConfigProvider);
     app.use(router);
     app.mount('#app');
   });

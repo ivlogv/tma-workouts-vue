@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import TestPage from "@/pages/TestPage.vue";
 import IndexPage from "@/pages/IndexPage.vue";
 import HistoryPage from "@/pages/HistoryPage.vue";
+import WorkoutsPage from "@/pages/WorkoutsPage.vue";
 // import InitDataPage from "@/pages/InitDataPage.vue";
 // import ThemeParamsPage from "@/pages/ThemeParamsPage.vue";
 // import LaunchParamsPage from "@/pages/LaunchParamsPage.vue";
@@ -28,15 +29,15 @@ export const routes = [
       title: "History Page",
     },
   },
-  // {
-  //   path: "/init-data",
-  //   name: "init-data",
-  //   // component: InitDataPage,
-  //   meta: {
-  //     title: "Init Data",
-  //     icon: "",
-  //   },
-  // },
+  {
+    path: "/workouts",
+    name: "workouts",
+    component: WorkoutsPage,
+    meta: {
+      title: "Workouts Page",
+      icon: "",
+    },
+  },
   // {
   //   path: "/theme-params",
   //   name: "theme-params",

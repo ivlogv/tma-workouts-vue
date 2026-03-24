@@ -39,6 +39,7 @@ const router = useRouter()
 const daysInRow = ref(42);
 const thisWeek = ref(5);
 
+// mock data for recent workout sessions, replace with real data from API
 const workouts = [
   {
     id: 1,
@@ -64,7 +65,10 @@ function toggleSelect(id: number) {
 function handleStart() {
   if (selectedId.value) {
     // navigate to workout page
-    router.push('/workouts')
+    router.push('/workouts/' + selectedId.value)
+  } else {
+    // show error message
+    router.push('/workouts/');
   }
 }
 </script>
@@ -98,7 +102,7 @@ function handleStart() {
 }
 
 .card__title {
-  color: var(--tg-theme-button-color, #fff);
+  color: var(--tg-theme-accent-text-color, #fff);
   font-size: 14px;
   font-weight: 600;
   line-height: 0.9;
