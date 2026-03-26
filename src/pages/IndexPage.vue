@@ -68,7 +68,7 @@ function handleStart() {
     router.push('/workouts/' + selectedId.value)
   } else {
     // show error message
-    router.push('/workouts/');
+    router.push('/workouts');
   }
 }
 </script>

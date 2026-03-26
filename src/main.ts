@@ -4,6 +4,7 @@ import naive from 'naive-ui'
 import { ConfigProvider } from 'vant';
 import { createApp } from 'vue';
 import { retrieveLaunchParams } from '@tma.js/sdk-vue';
+import { createPinia } from 'pinia'
 
 import App from './App.vue';
 import router from './router';
@@ -28,10 +29,12 @@ init({
   mockForMacOS: platform === 'ios',
 })
   .then(() => {
+    const pinia = createPinia();
     const app = createApp(App);
     app.config.errorHandler = errorHandler;
     app.use(naive);
     app.use(ConfigProvider);
     app.use(router);
+    app.use(pinia);
     app.mount('#app');
   });
