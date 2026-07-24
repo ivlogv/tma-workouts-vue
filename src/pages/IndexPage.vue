@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { showToast } from "vant";
 import { initData } from "@tma.js/sdk-vue";
-import axios from "axios";
+// import axios from "axios";
 
 import AppPage from "@/components/AppPage.vue";
 import ScreenHeader from "@/components/ScreenHeader.vue";
@@ -11,7 +11,7 @@ import BottomNav from "@/components/BottomNav.vue";
 import StatBlock from "@/components/StatBlock.vue";
 import RecentWorkouts from "@/components/RecentWorkouts.vue";
 
-import { api } from "@/shared/api";
+// import { api } from "@/shared/api";
 
 const router = useRouter();
 
@@ -36,32 +36,32 @@ const userLetter = computed(() => {
 const headerTitle = computed(() => `Привет, ${userName.value}! 👋`);
 
 // Выполняем авторизацию при загрузке страницы
-onMounted(async () => {
-  try {
-    isAuthLoading.value = true;
+// onMounted(async () => {
+//   try {
+//     isAuthLoading.value = true;
 
-    // Запрос на эндпоинт авторизации Telegram
-    const response = await api.post("/auth/telegram");
-    console.log("Авторизация прошла успешно:", response.data);
-  } catch (error) {
-    console.error("Ошибка при авторизации:", error);
+//     // Запрос на эндпоинт авторизации Telegram
+//     const response = await api.post("/auth/telegram");
+//     console.log("Авторизация прошла успешно:", response.data);
+//   } catch (error) {
+//     console.error("Ошибка при авторизации:", error);
 
-    let errorMessage = "Ошибка авторизации";
-    if (axios.isAxiosError(error)) {
-      errorMessage =
-        error.response?.data?.detail || error.message || errorMessage;
-    } else if (error instanceof Error) {
-      errorMessage = error.message;
-    }
+//     let errorMessage = "Ошибка авторизации";
+//     if (axios.isAxiosError(error)) {
+//       errorMessage =
+//         error.response?.data?.detail || error.message || errorMessage;
+//     } else if (error instanceof Error) {
+//       errorMessage = error.message;
+//     }
 
-    showToast({
-      type: "fail",
-      message: errorMessage,
-    });
-  } finally {
-    isAuthLoading.value = false;
-  }
-});
+//     showToast({
+//       type: "fail",
+//       message: errorMessage,
+//     });
+//   } finally {
+//     isAuthLoading.value = false;
+//   }
+// });
 
 // Моковые данные для последних тренировок
 const workouts = [
