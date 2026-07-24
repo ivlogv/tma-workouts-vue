@@ -11,7 +11,7 @@ import { VantResolver } from '@vant/auto-import-resolver';
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: "/tma-workouts-vue",
+  base: "/tma-workouts-vue/",
   plugins: [
     vue(),
     vueDevTools(),
