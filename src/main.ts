@@ -1,40 +1,47 @@
-import './assets/index.css';
+import "./assets/index.css";
 
-import naive from 'naive-ui'
-import { ConfigProvider } from 'vant';
-import { createApp } from 'vue';
-import { retrieveLaunchParams } from '@tma.js/sdk-vue';
-import { createPinia } from 'pinia'
+import { ConfigProvider } from "vant";
+import { createApp } from "vue";
+import { retrieveLaunchParams } from "@tma.js/sdk-vue";
+import { createPinia } from "pinia";
 
-import App from './App.vue';
-import router from './router';
-import { errorHandler } from './errorHandler';
-import { init } from './init';
+import App from "./App.vue";
+import router from "./router";
+import { errorHandler } from "./errorHandler";
+import { init } from "./init";
 
-// Mock the environment in case, we are outside Telegram.
-import './mockEnv';
+// Инициализируем моки для локальной разработки вне Telegram
+import "./mockEnv";
 
+// Получаем параметры запуска Telegram Mini App
 const launchParams = retrieveLaunchParams();
 const { tgWebAppPlatform: platform } = launchParams;
-const debug = (launchParams.tgWebAppStartParam || '').includes('debug') || import.meta.env.DEV;
 
+const debug =
+  (launchParams.tgWebAppStartParam || "").includes("debug") ||
+  import.meta.env.DEV;
 
-// const tp = launchParams.tgWebAppThemeParams;
-// console.log('Launch Params:', launchParams);
-// console.log('Theme Params:', tp);
-// Configure all application dependencies.
+// Инициализируем приложение Telegram SDK и внутренние зависимости
 init({
   debug,
-  eruda: debug && ['ios', 'android'].includes(platform),
-  mockForMacOS: platform === 'ios',
+  eruda: debug && ["ios", "android"].includes(platform),
+  mockForMacOS: platform === "ios",
 })
   .then(() => {
     const pinia = createPinia();
     const app = createApp(App);
+
+    // Глобальный обработчик ошибок
     app.config.errorHandler = errorHandler;
-    app.use(naive);
+
+    // Подключение плагинов
     app.use(ConfigProvider);
     app.use(router);
     app.use(pinia);
-    app.mount('#app');
+
+    // Монтирование приложения
+    app.mount("#app");
+  })
+  .catch((error) => {
+    console.error("Ошибка при инициализации приложения Telegram Mini App:", error);
   });

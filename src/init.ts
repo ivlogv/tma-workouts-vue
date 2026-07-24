@@ -11,36 +11,35 @@ import {
   miniApp,
   backButton,
   mainButton,
-  postEvent,
-} from '@tma.js/sdk-vue';
+  // postEvent,
+} from "@tma.js/sdk-vue";
 
 export function toSnakeCaseTheme(
-  params: Partial<ThemeParams>
+  params: Partial<ThemeParams>,
 ): Record<string, `#${string}` | undefined> {
-  const result: Record<string, `#${string}` | undefined> = {}
+  const result: Record<string, `#${string}` | undefined> = {};
 
   for (const key of Object.keys(params) as (keyof ThemeParams)[]) {
-    const keyStr = String(key)
-    const snake = keyStr.replace(/[A-Z]/g, m => '_' + m.toLowerCase())
+    const keyStr = String(key);
+    const snake = keyStr.replace(/[A-Z]/g, (m) => "_" + m.toLowerCase());
 
-    const value = params[key]
+    const value = params[key];
 
     // Если это ref/computed — берём .value
     const resolved =
-      typeof value === 'object' && value !== null && 'value' in value
+      typeof value === "object" && value !== null && "value" in value
         ? (value as { value: unknown }).value
-        : value
+        : value;
 
     // Пропускаем undefined
-    if (resolved === undefined) continue
+    if (resolved === undefined) continue;
 
     // Приводим к типу `#${string}`
-    result[snake] = resolved as `#${string}`
+    result[snake] = resolved as `#${string}`;
   }
 
-  return result
+  return result;
 }
-
 
 /**
  * Initializes the application and configures its dependencies.
@@ -56,7 +55,7 @@ export async function init(options: {
 
   // Add Eruda if needed.
   if (options.eruda) {
-    import('eruda').then(({ default: eruda }) => {
+    import("eruda").then(({ default: eruda }) => {
       eruda.init();
       eruda.position({ x: window.innerWidth - 50, y: 0 });
     });
@@ -69,19 +68,27 @@ export async function init(options: {
     let firstThemeSent = false;
     mockTelegramEnv({
       onEvent(event, next) {
-        if (event.name === 'web_app_request_theme') {
+        if (event.name === "web_app_request_theme") {
           let tp: Partial<ThemeParams> = {};
           if (firstThemeSent) {
             tp = themeParams.state();
           } else {
             firstThemeSent = true;
-            tp ||= retrieveLaunchParams().tgWebAppThemeParams as Partial<ThemeParams>;
+            tp ||= retrieveLaunchParams()
+              .tgWebAppThemeParams as Partial<ThemeParams>;
           }
-          return emitEvent('theme_changed', { theme_params: toSnakeCaseTheme(tp) });
+          return emitEvent("theme_changed", {
+            theme_params: toSnakeCaseTheme(tp),
+          });
         }
 
-        if (event.name === 'web_app_request_safe_area') {
-          return emitEvent('safe_area_changed', { left: 0, top: 0, right: 0, bottom: 0 });
+        if (event.name === "web_app_request_safe_area") {
+          return emitEvent("safe_area_changed", {
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+          });
         }
 
         next();
@@ -95,7 +102,14 @@ export async function init(options: {
 
   const platform = retrieveLaunchParams()?.tgWebAppPlatform;
   if (platform === "android" || platform === "ios") {
-    postEvent("web_app_expand");
+    // postEvent("web_app_expand");
+
+    if (viewport.mount.isAvailable()) {
+      viewport.mount().then(() => {
+        viewport.bindCssVars();
+        viewport.expand(); // <-- Разворачивает Mini App на весь экран штатно
+      });
+    }
   }
 
   if (miniApp.mount.isAvailable()) {

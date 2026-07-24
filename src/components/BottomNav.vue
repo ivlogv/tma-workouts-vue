@@ -1,37 +1,44 @@
 <script setup lang="ts">
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute, useRouter } from "vue-router";
 
-// Ionicons 5
-import {
-  HomeOutline,
-  TimeOutline,
-  // PieChartOutline,
-  SettingsOutline,
-  BarbellOutline,
-  Barbell,
-  Home,
-  Time,
-  // PieChart,
-  Settings,
-} from '@vicons/ionicons5'
+import { Icon } from "@iconify/vue";
 
-const router = useRouter()
-const route = useRoute()
+const router = useRouter();
+const route = useRoute();
 
 const items = [
-  { label: 'Home', icon: HomeOutline, iconActive: Home, path: '/' },
-  { label: 'History', icon: TimeOutline, iconActive: Time, path: '/history' },
-  { label: 'Workouts', icon: BarbellOutline, iconActive: Barbell, path: '/workouts' },
-  // { label: 'Analytics', icon: PieChartOutline, iconActive: PieChart, path: '/analytics' },
-  { label: 'Settings', icon: SettingsOutline, iconActive: Settings, path: '/test' }
-]
+  {
+    label: "Home",
+    icon: "mdi:home-outline",
+    iconActive: "mdi:home",
+    path: "/",
+  },
+  {
+    label: "History",
+    icon: "mdi:history",
+    iconActive: "mdi:history",
+    path: "/history",
+  },
+  {
+    label: "Workouts",
+    icon: "solar:dumbbell-outline",
+    iconActive: "solar:dumbbell-bold",
+    path: "/workouts",
+  },
+  {
+    label: "Settings",
+    icon: "mdi:cog-outline",
+    iconActive: "mdi:cog",
+    path: "/test",
+  },
+];
 
 function isActive(path: string) {
-  return route.path === path
+  return route.path === path;
 }
 
 function navigate(path: string) {
-  router.push(path)
+  router.push(path);
 }
 </script>
 
@@ -44,7 +51,11 @@ function navigate(path: string) {
       :class="{ active: isActive(item.path) }"
       @click="navigate(item.path)"
     >
-      <n-icon :component="isActive(item.path) ? item.iconActive : item.icon" size="22" />
+      <Icon
+        :icon="isActive(item.path) ? item.iconActive : item.icon"
+        width="22"
+      />
+
       <span class="label">{{ item.label }}</span>
     </div>
   </nav>
@@ -78,7 +89,9 @@ function navigate(path: string) {
   font-size: 12px;
   color: var(--tg-theme-text-color);
 
-  transition: background 0.2s ease, color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
   border-radius: 32px;
 }
 

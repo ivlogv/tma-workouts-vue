@@ -27,20 +27,20 @@ const api = axios.create({
   },
 });
 
-async function testLogin() {
-  if (!initDataRaw) {
-    message.value = "No init data";
-    return;
-  }
-  try {
-    const response = await api.post("/auth/telegram", {});
-    message.value = response.data.message;
-    console.log("Ответ сервера:", response.data);
-  } catch (error) {
-    console.error("Ошибка запроса:", error);
-    message.value = "Ошибка при запросе";
-  }
-}
+// async function testLogin() {
+//   if (!initDataRaw) {
+//     message.value = "No init data";
+//     return;
+//   }
+//   try {
+//     const response = await api.post("/auth/telegram", {});
+//     message.value = response.data.message;
+//     console.log("Ответ сервера:", response.data);
+//   } catch (error) {
+//     console.error("Ошибка запроса:", error);
+//     message.value = "Ошибка при запросе";
+//   }
+// }
 
 async function testFetchData() {
   if (!initDataRaw) {
@@ -67,7 +67,7 @@ async function testFetchData() {
 
 <template>
   <AppPage title="Home Page" :back="false">
-    <n-button @click="testLogin" type="primary">Тест авторизации</n-button>
+    <!-- <n-button @click="testLogin" type="primary">Тест авторизации</n-button> -->
     <p>{{ message }}</p>
 
     <van-button type="primary" @click="testFetchData">Тест запроса</van-button>

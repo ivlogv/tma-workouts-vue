@@ -1,49 +1,52 @@
 <script setup lang="ts">
-import type { Component } from 'vue'
-import { hapticFeedback } from '@tma.js/sdk-vue';
+import { hapticFeedback } from "@tma.js/sdk-vue";
+import { Icon } from "@iconify/vue";
 
 interface Workout {
-  id: number
-  name: string
-  date: string
-  icon?: Component | string
+  id: number;
+  name: string;
+  date: string;
+  icon?: string;
 }
 
-withDefaults(defineProps<{
-  workouts?: Workout[]
-  selectedId?: number
-}>(), { workouts: () => [] })
+withDefaults(
+  defineProps<{
+    workouts?: Workout[];
+    selectedId?: number;
+  }>(),
+  { workouts: () => [] },
+);
 
-const emit = defineEmits<(e: 'select', id: number) => void>()
+const emit = defineEmits<(e: "select", id: number) => void>();
 
 function ripple(e: MouseEvent) {
-  const target = e.currentTarget as HTMLElement
+  const target = e.currentTarget as HTMLElement;
 
   // создаём элемент ripple
-  const circle = document.createElement("span")
-  const diameter = Math.max(target.clientWidth, target.clientHeight)
-  const radius = diameter / 2
+  const circle = document.createElement("span");
+  const diameter = Math.max(target.clientWidth, target.clientHeight);
+  const radius = diameter / 2;
 
-  circle.style.width = circle.style.height = `${diameter}px`
-  circle.style.left = `${e.clientX - target.getBoundingClientRect().left - radius}px`
-  circle.style.top = `${e.clientY - target.getBoundingClientRect().top - radius}px`
-  circle.classList.add("ripple")
+  circle.style.width = circle.style.height = `${diameter}px`;
+  circle.style.left = `${e.clientX - target.getBoundingClientRect().left - radius}px`;
+  circle.style.top = `${e.clientY - target.getBoundingClientRect().top - radius}px`;
+  circle.classList.add("ripple");
 
   // удаляем старый ripple, если есть
-  const oldRipple = target.querySelector(".ripple")
-  if (oldRipple) oldRipple.remove()
+  const oldRipple = target.querySelector(".ripple");
+  if (oldRipple) oldRipple.remove();
 
-  target.appendChild(circle)
+  target.appendChild(circle);
 }
 
 function handleClick(e: MouseEvent, id: number) {
   // вибрация
-  if(hapticFeedback.isSupported()) {
-    hapticFeedback.impactOccurred("light")
+  if (hapticFeedback.isSupported()) {
+    hapticFeedback.impactOccurred("light");
   }
 
-  ripple(e)
-  emit("select", id)
+  ripple(e);
+  emit("select", id);
 }
 </script>
 
@@ -66,13 +69,12 @@ function handleClick(e: MouseEvent, id: number) {
           <div class="date">{{ w.date }}</div>
         </div>
         <div class="icon">
-          <n-icon size="22" :component="w.icon" />
+          <Icon v-if="w.icon" :icon="w.icon" width="22" />
         </div>
       </div>
     </div>
   </div>
 </template>
-
 
 <style scoped>
 .card {

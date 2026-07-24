@@ -20,10 +20,14 @@ declare module 'vue' {
     RecentWorkouts: typeof import('./src/components/RecentWorkouts.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ScreenHeader: typeof import('./src/components/ScreenHeader.vue')['default']
+    StatBlock: typeof import('./src/components/StatBlock.vue')['default']
+    StatCard: typeof import('./src/components/StatCard.vue')['default']
     StatsBlock: typeof import('./src/components/StatsBlock.vue')['default']
     VanButton: typeof import('vant/es')['Button']
     VanCell: typeof import('vant/es')['Cell']
     VanCellGroup: typeof import('vant/es')['CellGroup']
     VanConfigProvider: typeof import('vant/es')['ConfigProvider']
+    VanIcon: typeof import('vant/es')['Icon']
   }
 }

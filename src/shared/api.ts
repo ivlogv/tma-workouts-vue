@@ -1,24 +1,35 @@
-import axios from "axios"
-import { retrieveRawInitData } from "@tma.js/sdk-vue"
+import axios from "axios";
+import { retrieveRawInitData } from "@tma.js/sdk-vue";
 
 export const api = axios.create({
-  baseURL: "http://localhost:8000/api",
-})
+  // Берём URL из переменных окружения Vite, а если её нет — используем fallback
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
-// каждый запрос будет автоматически получать актуальный initDataRaw
-api.interceptors.request.use((config) => {
-  const initDataRaw = retrieveRawInitData()
-  if (initDataRaw) {
-    config.headers.Authorization = `tma ${initDataRaw}`
+// Каждый запрос автоматически получает актуальный initDataRaw
+api.interceptors.request.use(
+  (config) => {
+    const initDataRaw = retrieveRawInitData();
+    if (initDataRaw) {
+      config.headers.Authorization = `tma ${initDataRaw}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-  return config
-})
+);
 
-
-// base api instance with the base URL and default headers
-// const api = axios.create({
-//   baseURL: "http://localhost:8000/api",
-//   headers: {
-//     Authorization: `tma ${initDataRaw}`,
-//   },
-// });
+// Глобальная обработка ответов и ошибок
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      console.error("Ошибка авторизации Telegram Mini App (401)");
+    }
+    return Promise.reject(error);
+  }
+);
