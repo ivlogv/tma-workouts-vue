@@ -14,9 +14,7 @@ declare module 'vue' {
     AppLink: typeof import('./src/components/AppLink.vue')['default']
     AppPage: typeof import('./src/components/AppPage.vue')['default']
     BottomNav: typeof import('./src/components/BottomNav.vue')['default']
-    Card: typeof import('./src/components/Card.vue')['default']
     CardBlock: typeof import('./src/components/CardBlock.vue')['default']
-    MyCard: typeof import('./src/components/MyCard.vue')['default']
     RecentWorkouts: typeof import('./src/components/RecentWorkouts.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
@@ -28,6 +26,5 @@ declare module 'vue' {
     VanCell: typeof import('vant/es')['Cell']
     VanCellGroup: typeof import('vant/es')['CellGroup']
     VanConfigProvider: typeof import('vant/es')['ConfigProvider']
-    VanIcon: typeof import('vant/es')['Icon']
   }
 }
