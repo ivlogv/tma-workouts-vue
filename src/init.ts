@@ -116,6 +116,7 @@ export async function init(options: {
     themeParams.mount();
     miniApp.mount();
     miniApp.setHeaderColor("secondary_bg_color");
+    miniApp.setBottomBarColor("secondary_bg_color");
     themeParams.bindCssVars();
   }
 

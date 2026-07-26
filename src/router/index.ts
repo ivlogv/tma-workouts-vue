@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import TestPage from "@/pages/TestPage.vue";
 import IndexPage from "@/pages/IndexPage.vue";
 import HistoryPage from "@/pages/HistoryPage.vue";
+import WorkoutPlansPage from "@/pages/WorkoutPlansPage.vue";
 import WorkoutsPage from "@/pages/WorkoutsPage.vue";
 import StatsPage from "@/pages/StatsPage.vue";
 // import InitDataPage from "@/pages/InitDataPage.vue";
@@ -36,6 +37,15 @@ export const routes = [
     component: WorkoutsPage,
     meta: {
       title: "Workouts Page",
+      icon: "",
+    },
+  },
+  {
+    path: "/plans",
+    name: "plans",
+    component: WorkoutPlansPage,
+    meta: {
+      title: "Workout Plans Page",
       icon: "",
     },
   },

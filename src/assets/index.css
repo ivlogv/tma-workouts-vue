@@ -44,7 +44,9 @@ pre {
 .v-ripple-effect {
   position: absolute;
   border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.15); /* Мягкая светлая волна */
+  /* background-color: rgba(255, 255, 255, 0.15); */
+  background-color: var(--tg-theme-hint-color, #000);
+  opacity: 0.1;
   transform: scale(0);
   animation: ripple 0.8s ease-out forwards;
   pointer-events: none;
