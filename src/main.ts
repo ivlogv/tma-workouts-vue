@@ -10,6 +10,8 @@ import router from "./router";
 import { errorHandler } from "./errorHandler";
 import { init } from "./init";
 
+import { vRipple } from "@/directives/vRipple";
+
 // Инициализируем моки для локальной разработки вне Telegram
 import "./mockEnv";
 import 'vant/lib/toast/style'
@@ -39,6 +41,8 @@ init({
     app.use(ConfigProvider);
     app.use(router);
     app.use(pinia);
+
+    app.directive("ripple", vRipple);
 
     // Монтирование приложения
     app.mount("#app");

@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { hapticFeedback } from "@tma.js/sdk-vue";
 import { Icon } from "@iconify/vue";
-import type { Directive } from "vue";
 
 export interface ActiveWorkout {
   id?: number | string;
@@ -25,44 +23,14 @@ const emit = defineEmits<{
   (e: "click"): void;
 }>();
 
-// Директива Ripple
-const vRipple: Directive = {
-  mounted(el: HTMLElement) {
-    el.style.position = "relative";
-    el.style.overflow = "hidden";
-
-    el.addEventListener("click", (e: MouseEvent) => {
-      const rect = el.getBoundingClientRect();
-      const circle = document.createElement("span");
-      const diameter = Math.max(rect.width, rect.height);
-      const radius = diameter / 2;
-
-      circle.style.width = circle.style.height = `${diameter}px`;
-      circle.style.left = `${e.clientX - rect.left - radius}px`;
-      circle.style.top = `${e.clientY - rect.top - radius}px`;
-      circle.classList.add("v-ripple-effect");
-
-      const oldRipple = el.querySelector(".v-ripple-effect");
-      if (oldRipple) oldRipple.remove();
-
-      el.appendChild(circle);
-
-      setTimeout(() => circle.remove(), 600);
-    });
-  },
-};
-
 function handleClick() {
-  if (hapticFeedback.isSupported()) {
-    hapticFeedback.impactOccurred("light");
-  }
   emit("click");
 }
 </script>
 
 <template>
+  <!-- Просто вешаем v-ripple на любой элемент -->
   <div v-if="workout" v-ripple class="active-banner" @click="handleClick">
-    <!-- Левая часть: Пульс + Инфо -->
     <div class="active-banner__main">
       <div class="active-banner__header">
         <span class="pulse-dot"></span>
@@ -88,7 +56,6 @@ function handleClick() {
       </div>
     </div>
 
-    <!-- Правая часть: Стрелка перехода -->
     <div class="active-banner__action">
       <Icon icon="lucide:chevron-right" width="20" height="20" />
     </div>
@@ -108,8 +75,8 @@ function handleClick() {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
+  touch-action: manipulation;
 
-  /* Анимированная акцентная граница через box-shadow */
   border: 1px solid color-mix(in srgb, var(--tg-theme-button-color, #3390ec) 40%, transparent);
   animation: border-glow 2.5s infinite ease-in-out;
 }
@@ -137,7 +104,6 @@ function handleClick() {
   gap: 8px;
 }
 
-/* Пульсирующая точка в цвет кнопки Telegram */
 .pulse-dot {
   width: 7px;
   height: 7px;
@@ -188,22 +154,5 @@ function handleClick() {
   display: flex;
   align-items: center;
   color: var(--tg-theme-button-color, #3390ec);
-}
-
-/* Ripple в цвет кнопки Telegram */
-:deep(.v-ripple-effect) {
-  position: absolute;
-  border-radius: 50%;
-  background-color: color-mix(in srgb, var(--tg-theme-button-color, #3390ec) 20%, transparent);
-  transform: scale(0);
-  animation: ripple 0.5s ease-out;
-  pointer-events: none;
-}
-
-@keyframes ripple {
-  to {
-    transform: scale(3.5);
-    opacity: 0;
-  }
 }
 </style>

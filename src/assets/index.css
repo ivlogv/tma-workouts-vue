@@ -40,6 +40,22 @@ pre {
   overflow: auto;
 }
 
+/* Глобальный эффект нативной мягкой волны */
+.v-ripple-effect {
+  position: absolute;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.15); /* Мягкая светлая волна */
+  transform: scale(0);
+  animation: ripple 0.9s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(3.5);
+  }
+}
+
 /* .card {
   background: var(--tg-theme-bg-color, #1c1c1c);
   padding: 16px;

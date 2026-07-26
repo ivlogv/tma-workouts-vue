@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { hapticFeedback } from "@tma.js/sdk-vue";
 import { Icon } from "@iconify/vue";
-import type { Directive } from "vue";
+import { computed } from "vue";
 
 interface Workout {
   id: number;
@@ -10,12 +9,13 @@ interface Workout {
   icon?: string;
 }
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     workouts?: Workout[];
     selectedId?: number;
+    maxItems?: number;
   }>(),
-  { workouts: () => [] },
+  { workouts: () => [], maxItems: 3 },
 );
 
 const emit = defineEmits<{
@@ -23,44 +23,17 @@ const emit = defineEmits<{
   (e: "open-history"): void;
 }>();
 
-// Кастомная легкая директива Ripple
-const vRipple: Directive = {
-  mounted(el: HTMLElement) {
-    el.style.position = "relative";
-    el.style.overflow = "hidden";
-
-    el.addEventListener("click", (e: MouseEvent) => {
-      const rect = el.getBoundingClientRect();
-      const circle = document.createElement("span");
-      const diameter = Math.max(rect.width, rect.height);
-      const radius = diameter / 2;
-
-      circle.style.width = circle.style.height = `${diameter}px`;
-      circle.style.left = `${e.clientX - rect.left - radius}px`;
-      circle.style.top = `${e.clientY - rect.top - radius}px`;
-      circle.classList.add("v-ripple-effect");
-
-      const oldRipple = el.querySelector(".v-ripple-effect");
-      if (oldRipple) oldRipple.remove();
-
-      el.appendChild(circle);
-
-      setTimeout(() => circle.remove(), 600);
-    });
-  },
-};
+const displayedWorkouts = computed(() => {
+  return [...props.workouts]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, props.maxItems);
+});
 
 function handleClick(id: number) {
-  if (hapticFeedback.isSupported()) {
-    hapticFeedback.impactOccurred("light");
-  }
   emit("select", id);
 }
 
 function handleHistoryClick() {
-  if (hapticFeedback.isSupported()) {
-    hapticFeedback.impactOccurred("light");
-  }
   emit("open-history");
 }
 </script>
@@ -72,9 +45,9 @@ function handleHistoryClick() {
     <div v-if="workouts.length === 0" class="empty">Нет тренировок</div>
 
     <van-cell-group v-else inset :border="false">
-      <!-- Навешиваем v-ripple прямо на van-cell -->
+      <!-- Навешиваем глобальную v-ripple прямо на van-cell -->
       <van-cell
-        v-for="w in workouts"
+        v-for="w in displayedWorkouts"
         :key="w.id"
         v-ripple
         :class="{ active: w.id === selectedId }"
@@ -95,7 +68,7 @@ function handleHistoryClick() {
         </template>
       </van-cell>
 
-      <!-- Инлайн-кнопка перехода к истории (последний элемент группы) -->
+      <!-- Инлайн-кнопка перехода к истории -->
       <van-cell
         v-ripple
         class="history-cell"
@@ -127,7 +100,6 @@ function handleHistoryClick() {
 :deep(.van-cell-group--inset) {
   margin: 0;
   border-radius: 12px;
-  /* background-color: var(--tg-theme-secondary-bg-color, #1c1c1e); */
   overflow: hidden;
 }
 
@@ -136,8 +108,8 @@ function handleHistoryClick() {
   color: var(--tg-theme-text-color, #ffffff);
   padding: 12px 16px;
   align-items: center;
-  /* Убираем все жесткие ховеры Vant */
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 /* Разделительная линия между ячейками */
@@ -145,23 +117,6 @@ function handleHistoryClick() {
   border-bottom-color: rgba(255, 255, 255, 0.06);
   left: 16px;
   right: 16px;
-}
-
-/* Стили самой волны */
-:deep(.v-ripple-effect) {
-  position: absolute;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.15); /* Мягкая белая волна */
-  transform: scale(0);
-  animation: ripple 0.9s ease-out;
-  pointer-events: none;
-}
-
-@keyframes ripple {
-  to {
-    transform: scale(3.5);
-    opacity: 0;
-  }
 }
 
 .workout-name {
@@ -179,23 +134,13 @@ function handleHistoryClick() {
 .workout-icon {
   display: flex;
   align-items: center;
-  /* color: var(--tg-theme-hint-color, #8e8e93); */
   margin-left: 8px;
 }
-
-/* :deep(.van-cell.active) {
-  background-color: color-mix(in srgb, var(--tg-theme-button-color, #3390ec) 15%, transparent);
-} */
 
 :deep(.van-cell.active) .workout-name,
 :deep(.van-cell.active) .workout-icon {
   color: var(--tg-theme-button-color, #3390ec);
 }
-
-/* Стилизация кнопки истории */
-/* .history-cell {
-  background-color: rgba(255, 255, 255, 0.02);
-} */
 
 .history-content {
   display: flex;
@@ -205,7 +150,6 @@ function handleHistoryClick() {
   font-size: 13px;
   font-weight: 500;
   color: var(--tg-theme-link-color, #3390ec);
-  /* padding: 2px 0; */
 }
 
 .empty {
