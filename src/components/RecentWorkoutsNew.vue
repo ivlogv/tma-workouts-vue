@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { triggerHaptic } from "@/shared/utils/haptic";
 import { Icon } from "@iconify/vue";
 import { computed } from "vue";
 
@@ -30,10 +31,12 @@ const displayedWorkouts = computed(() => {
 });
 
 function handleClick(id: number) {
+  triggerHaptic("light");
   emit("select", id);
 }
 
 function handleHistoryClick() {
+  triggerHaptic("light");
   emit("open-history");
 }
 </script>

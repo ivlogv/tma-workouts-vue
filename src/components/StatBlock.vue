@@ -2,6 +2,7 @@
 import { useRouter } from "vue-router";
 import { Icon } from "@iconify/vue";
 import StatCard from "./StatCard.vue";
+import { triggerHaptic } from "@/shared/utils/haptic.ts";
 
 withDefaults(
   defineProps<{
@@ -19,6 +20,7 @@ withDefaults(
 const router = useRouter();
 
 function goToStats() {
+  triggerHaptic("light");
   router.push("/stats");
 }
 </script>

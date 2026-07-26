@@ -1,5 +1,4 @@
 import type { Directive } from "vue";
-import { hapticFeedback } from "@tma.js/sdk-vue";
 
 export const vRipple: Directive = {
   mounted(el: HTMLElement) {
@@ -12,7 +11,7 @@ export const vRipple: Directive = {
 
       const rect = el.getBoundingClientRect();
 
-      // Безопасное извлечение координат с учетом TS (strict null check)
+      // Безопасное извлечение координат
       const touch = "touches" in e ? e.touches[0] : null;
       const clientX = touch ? touch.clientX : (e as MouseEvent).clientX;
       const clientY = touch ? touch.clientY : (e as MouseEvent).clientY;
@@ -39,12 +38,6 @@ export const vRipple: Directive = {
 
         window.removeEventListener("pointerup", clearRipple);
         window.removeEventListener("pointercancel", clearRipple);
-
-        // Вибрация в момент отпускания
-        // убрать отсюда и добавить в onClick, если нужно, чтобы вибрация была только при клике, а не при скролле
-        if (hapticFeedback.isSupported()) {
-          hapticFeedback.impactOccurred("light");
-        }
       };
 
       window.addEventListener("pointerup", clearRipple);

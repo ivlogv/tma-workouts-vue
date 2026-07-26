@@ -93,7 +93,7 @@ const displayPlans = computed(() => props.plans.slice(0, props.maxItems));
 /* Он решает проблему, когда padding-right в overflow-x: auto игнорируется браузерами */
 .workout-gallery::after {
   content: "";
-  flex: 0 0 4px; /* 12px (gap) + 4px = 16px идеального отступа справа */
+  flex: 0 0 12px; /* 12px (gap) + 4px = 16px идеального отступа справа */
 }
 
 .workout-gallery::-webkit-scrollbar {

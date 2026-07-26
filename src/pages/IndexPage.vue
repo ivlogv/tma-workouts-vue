@@ -13,6 +13,7 @@ import StatBlock from "@/components/StatBlock.vue";
 import RecentWorkoutsNew from "@/components/RecentWorkoutsNew.vue";
 import ActiveWorkoutCard from "@/components/ActiveWorkoutCard.vue";
 import WorkoutPlanGallery from "@/components/WorkoutPlanGallery.vue";
+import { triggerHaptic } from "@/shared/utils/haptic";
 
 // import { api } from "@/shared/api";
 
@@ -126,9 +127,11 @@ function toggleSelect(id: number) {
 }
 
 function handleStart() {
+  triggerHaptic("medium");
   if (activeWorkout.value) {
     router.push(`/workouts/active`);
   } else if (selectedId.value) {
+    triggerHaptic("medium");
     router.push(`/workouts/${selectedId.value}`);
   } else {
     router.push("/workouts");
@@ -137,13 +140,16 @@ function handleStart() {
 
 function handleAvatarClick() {
   showToast(`Профиль: ${userName.value}`);
+  triggerHaptic("light");
 }
 
 function handlePlanClick(id: string | number) {
+  triggerHaptic("light");
   router.push(`/plans/${id}`);
 }
 
 function handleMorePlans() {
+  triggerHaptic("light");
   router.push("/plans");
 }
 

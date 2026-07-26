@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { triggerHaptic } from "@/shared/utils/haptic";
 import { Icon } from "@iconify/vue";
 
 export interface ActiveWorkout {
@@ -24,6 +25,7 @@ const emit = defineEmits<{
 }>();
 
 function handleClick() {
+  triggerHaptic("light");
   emit("click");
 }
 </script>
