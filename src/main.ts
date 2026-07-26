@@ -12,6 +12,7 @@ import { init } from "./init";
 
 // Инициализируем моки для локальной разработки вне Telegram
 import "./mockEnv";
+import 'vant/lib/toast/style'
 
 // Получаем параметры запуска Telegram Mini App
 const launchParams = retrieveLaunchParams();

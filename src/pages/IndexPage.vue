@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import { showToast } from "vant";
-import { initData } from "@tma.js/sdk-vue";
+import { initData, mainButton } from "@tma.js/sdk-vue";
 // import axios from "axios";
 
 import AppPage from "@/components/AppPage.vue";
@@ -10,6 +10,7 @@ import ScreenHeader from "@/components/ScreenHeader.vue";
 import BottomNav from "@/components/BottomNav.vue";
 import StatBlock from "@/components/StatBlock.vue";
 import RecentWorkouts from "@/components/RecentWorkouts.vue";
+import RecentWorkoutsNew from "@/components/RecentWorkoutsNew.vue";
 
 // import { api } from "@/shared/api";
 
@@ -85,6 +86,10 @@ const workouts = [
   },
 ];
 
+const buttonText = computed(() => {
+  return selectedId.value ? "Перейти к тренировке" : "Выбрать тренировку";
+});
+
 const selectedId = ref<number | undefined>(undefined);
 
 function toggleSelect(id: number) {
@@ -102,6 +107,36 @@ function handleStart() {
 function handleAvatarClick() {
   showToast(`Профиль: ${userName.value}`);
 }
+
+// --- Интеграция с Telegram MainButton ---
+
+// Настройка и отображение MainButton при монтировании
+onMounted(() => {
+  if (mainButton.isMounted()) {
+    // Устанавливаем стартовый текст и вешаем клик
+    mainButton.setText(buttonText.value);
+    mainButton.enable();
+    mainButton.show();
+
+    // Слушаем клик по нижней синей/зеленой кнопке Telegram
+    mainButton.onClick(handleStart);
+  }
+});
+
+// Обновляем текст кнопки при смене выбранной тренировки
+watch(buttonText, (newText) => {
+  if (mainButton.isMounted()) {
+    mainButton.setText(newText);
+  }
+});
+
+// ОБЯЗАТЕЛЬНО: Прячем или отписываемся при уходе с экрана
+onUnmounted(() => {
+  if (mainButton.isMounted()) {
+    mainButton.offClick(handleStart);
+    mainButton.hide(); // Прячем кнопку, если на следующем экране нужна другая логика
+  }
+});
 </script>
 
 <template>
@@ -125,6 +160,12 @@ function handleAvatarClick() {
     />
 
     <RecentWorkouts
+      :workouts="workouts"
+      :selected-id="selectedId"
+      @select="toggleSelect"
+    />
+
+    <RecentWorkoutsNew
       :workouts="workouts"
       :selected-id="selectedId"
       @select="toggleSelect"
