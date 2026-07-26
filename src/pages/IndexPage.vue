@@ -94,7 +94,7 @@ const selectedId = ref<number | undefined>(undefined);
 
 function toggleSelect(id: number) {
   selectedId.value = selectedId.value === id ? undefined : id;
-  showToast(`${mainButton.state()}`);
+  showToast(`${mainButton.state().text}`);
 }
 
 function handleStart() {
@@ -116,7 +116,9 @@ onMounted(() => {
   if (mainButton.isMounted()) {
     // Устанавливаем стартовый текст и вешаем клик
     mainButton.setText(buttonText.value);
-    mainButton.hasShineEffect();
+    mainButton.setParams({
+        hasShineEffect: true,
+      });
     mainButton.enable();
     mainButton.show();
 
