@@ -24,10 +24,10 @@ defineProps<{ title: string, disclaimer?: string }>();
   display: flex;
   flex-direction: column;
   height: 100%;
-  /* padding: 12px; */
-  overflow-x: hidden;
   box-sizing: border-box;
-  /* margin-top: 80px; */
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 /* Title */
@@ -52,7 +52,13 @@ defineProps<{ title: string, disclaimer?: string }>();
   flex-direction: column;
   gap: 12px;
   overflow-y: auto;
+  /* КРИТИЧЕСКИ ВАЖНО: обрезаем горизонтальный «вылет» элементов */
+  overflow-x: hidden;
+  /* КРИТИЧЕСКИ ВАЖНО: не даем flexbox распирать ширину больше 100% */
+  min-width: 0;
+  width: 100%;
   padding: 12px 12px 82px 12px;
+  box-sizing: border-box;
 }
 
 /* Bottom bar */

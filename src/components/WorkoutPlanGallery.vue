@@ -76,11 +76,11 @@ const displayPlans = computed(() => props.plans.slice(0, props.maxItems));
 
   /* Важно: растягиваем на ширину с учетом отрицательных отступов */
   width: calc(100% + 32px);
-  margin-left: -16px;
-  margin-right: -16px;
+  margin-left: -12px;
+  margin-right: -12px;
 
   /* Задаем левый отступ, а правый компенсируем через ::after ниже */
-  padding-left: 16px;
+  padding-left: 12px;
   box-sizing: border-box;
 
   -webkit-overflow-scrolling: touch;
