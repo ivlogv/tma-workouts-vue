@@ -124,11 +124,15 @@ onMounted(() => {
 });
 
 // Обновляем текст кнопки при смене выбранной тренировки
-watch(buttonText, (newText) => {
-  if (mainButton.isMounted()) {
-    mainButton.setText(newText);
-  }
-});
+watch(
+  buttonText,
+  (newText) => {
+    if (mainButton.isMounted()) {
+      mainButton.setText(newText);
+    }
+  },
+  { flush: "post" },
+);
 
 // ОБЯЗАТЕЛЬНО: Прячем или отписываемся при уходе с экрана
 onUnmounted(() => {
