@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import AppPage from "@/components/AppPage.vue";
 import BottomNav from "@/components/BottomNav.vue";
+import ScreenHeader from "@/components/ScreenHeader.vue";
 </script>
 
 <template>
-  <AppPage title="История тренировок">
-    <p>Здесь будет отображаться история ваших тренировок.</p>
+  <AppPage title="">
+    <ScreenHeader title="История тренировок" show-back @back="$router.back()" />
 
-    <van-button type="primary" @click="$router.back()"> Назад </van-button>
+    <p>Здесь будет отображаться история ваших тренировок.</p>
 
     <template #bottom>
       <BottomNav />

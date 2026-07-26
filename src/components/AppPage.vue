@@ -24,14 +24,15 @@ defineProps<{ title: string, disclaimer?: string }>();
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 12px;
+  /* padding: 12px; */
+  overflow-x: hidden;
   box-sizing: border-box;
   /* margin-top: 80px; */
 }
 
 /* Title */
 .page__title {
-  margin: 0 0 12px;
+  margin: 12px 12px 0;
   font-size: 22px;
   font-weight: 600;
   color: var(--tg-theme-text-color);
@@ -51,7 +52,7 @@ defineProps<{ title: string, disclaimer?: string }>();
   flex-direction: column;
   gap: 12px;
   overflow-y: auto;
-  padding-bottom: 82px;
+  padding: 12px 12px 82px 12px;
 }
 
 /* Bottom bar */

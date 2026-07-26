@@ -31,11 +31,6 @@ export const vRipple: Directive = {
 
       el.appendChild(circle);
 
-      // Вибрация в момент касания
-      if (hapticFeedback.isSupported()) {
-        hapticFeedback.impactOccurred("light");
-      }
-
       // Плавно растворяем волну при отпускании пальца/скролле
       const clearRipple = () => {
         circle.style.opacity = "0";
@@ -44,6 +39,12 @@ export const vRipple: Directive = {
 
         window.removeEventListener("pointerup", clearRipple);
         window.removeEventListener("pointercancel", clearRipple);
+
+        // Вибрация в момент отпускания
+        // убрать отсюда и добавить в onClick, если нужно, чтобы вибрация была только при клике, а не при скролле
+        if (hapticFeedback.isSupported()) {
+          hapticFeedback.impactOccurred("light");
+        }
       };
 
       window.addEventListener("pointerup", clearRipple);

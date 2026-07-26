@@ -12,6 +12,7 @@ import StatBlock from "@/components/StatBlock.vue";
 // import RecentWorkouts from "@/components/RecentWorkouts.vue";
 import RecentWorkoutsNew from "@/components/RecentWorkoutsNew.vue";
 import ActiveWorkoutCard from "@/components/ActiveWorkoutCard.vue";
+import WorkoutPlanGallery from "@/components/WorkoutPlanGallery.vue";
 
 // import { api } from "@/shared/api";
 
@@ -102,6 +103,17 @@ const workouts = [
   },
 ];
 
+const myPlans = ref([
+  {
+    id: "1",
+    name: "Силовая А (Грудь + Трицепс)",
+    exercises: [1, 2, 3, 4],
+    color: "#ff9500",
+  },
+  { id: "2", name: "День Спины", exercises: [1, 2, 3, 4, 5], color: "#3390ec" },
+  { id: "3", name: "Nogi & Pres", exercises: [1, 2, 3], color: "#34c759" },
+]);
+
 const buttonText = computed(() => {
   return selectedId.value ? "Перейти к тренировке" : "Выбрать тренировку";
 });
@@ -127,6 +139,14 @@ function handleAvatarClick() {
   showToast(`Профиль: ${userName.value}`);
 }
 
+function handlePlanClick(id: string | number) {
+  router.push(`/plans/${id}`);
+}
+
+function handleMorePlans() {
+  router.push("/plans");
+}
+
 // --- Интеграция с Telegram MainButton ---
 
 // Настройка и отображение MainButton при монтировании
@@ -135,8 +155,8 @@ onMounted(() => {
     // Устанавливаем стартовый текст и вешаем клик
     mainButton.setText(buttonText.value);
     mainButton.setParams({
-        hasShineEffect: true,
-      });
+      hasShineEffect: true,
+    });
     mainButton.enable();
     mainButton.show();
 
@@ -174,10 +194,7 @@ onUnmounted(() => {
       @avatar-click="handleAvatarClick"
     />
 
-    <ActiveWorkoutCard
-      :workout="activeWorkout"
-      @click="handleStart"
-    />
+    <ActiveWorkoutCard :workout="activeWorkout" @click="handleStart" />
 
     <!-- <StatsBlock :days-in-row="daysInRow" :this-week="thisWeek" />
 
@@ -201,6 +218,12 @@ onUnmounted(() => {
       :selected-id="selectedId"
       @select="toggleSelect"
       @open-history="router.push('/history')"
+    />
+
+    <WorkoutPlanGallery
+      :plans="myPlans"
+      @plan-click="handlePlanClick"
+      @more-click="handleMorePlans"
     />
 
     <van-button

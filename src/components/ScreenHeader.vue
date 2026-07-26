@@ -1,25 +1,29 @@
 <script setup lang="ts">
+import { useSlots } from "vue";
 import { Icon } from "@iconify/vue";
 
 defineProps<{
   title: string;
   subtitle?: string;
   showBack?: boolean;
-  letter: string;
+  letter?: string; // Сделали опциональным
 }>();
 
 const emit = defineEmits<{
   (e: "back"): void;
   (e: "avatar-click"): void;
 }>();
+
+const slots = useSlots();
 </script>
 
 <template>
   <div class="screen-header">
     <div class="header-main">
-      <!-- Кнопка "Назад" (если требуется) -->
+      <!-- Кнопка "Назад" с v-ripple -->
       <button
         v-if="showBack"
+        v-ripple
         class="back-button"
         type="button"
         @click="emit('back')"
@@ -34,10 +38,11 @@ const emit = defineEmits<{
       </div>
     </div>
 
-    <!-- Аватарка/Кнопка с первой буквой справа -->
-    <div class="action-slot">
+    <!-- Показываем правую секцию только если передан letter или использован кастомный слот #action -->
+    <div v-if="letter || slots.action" class="action-slot">
       <slot name="action">
         <button
+          v-ripple
           class="avatar-btn"
           type="button"
           @click="emit('avatar-click')"
@@ -68,17 +73,14 @@ const emit = defineEmits<{
   background: none;
   border: none;
   padding: 8px;
-  margin-left: -8px;
+  border-radius: 50%;
   cursor: pointer;
-  color: var(--tg-theme-link-color, #2481cc);
+  color: var(--tg-theme-link-color, #3390ec);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.2s ease;
-}
-
-.back-button:active {
-  opacity: 0.7;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .title-group {
@@ -97,7 +99,7 @@ const emit = defineEmits<{
   font-size: 0.875rem; /* 14px */
   line-height: 1.5;
   margin: 4px 0 0 0;
-  color: var(--tg-theme-hint-color, #aaaaaa);
+  color: var(--tg-theme-hint-color, #8e8e93);
 }
 
 .action-slot {
@@ -105,13 +107,13 @@ const emit = defineEmits<{
   align-items: center;
 }
 
-/* Кнопка с буквой (Аватарка) */
+/* Кнопка-аватарка */
 .avatar-btn {
   width: 40px;
   height: 40px;
   border-radius: 50%;
   border: none;
-  background-color: var(--tg-theme-button-color, #2481cc);
+  background-color: var(--tg-theme-button-color, #3390ec);
   color: var(--tg-theme-button-text-color, #ffffff);
   font-size: 1.1rem;
   font-weight: 600;
@@ -119,11 +121,7 @@ const emit = defineEmits<{
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform 0.1s ease, opacity 0.2s ease;
-}
-
-.avatar-btn:active {
-  transform: scale(0.95);
-  opacity: 0.8;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 </style>
