@@ -11,6 +11,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ActiveWorkoutCard: typeof import('./src/components/ActiveWorkoutCard.vue')['default']
     AppLink: typeof import('./src/components/AppLink.vue')['default']
     AppPage: typeof import('./src/components/AppPage.vue')['default']
     BottomNav: typeof import('./src/components/BottomNav.vue')['default']

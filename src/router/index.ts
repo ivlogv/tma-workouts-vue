@@ -38,6 +38,15 @@ export const routes = [
       icon: "",
     },
   },
+  {
+    path: "/workouts/active",
+    name: "active-workout",
+    component: TestPage,
+    meta: {
+      title: "Active Workout",
+      icon: "",
+    },
+  },
   // {
   //   path: "/theme-params",
   //   name: "theme-params",

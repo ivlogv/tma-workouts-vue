@@ -11,6 +11,7 @@ import BottomNav from "@/components/BottomNav.vue";
 import StatBlock from "@/components/StatBlock.vue";
 // import RecentWorkouts from "@/components/RecentWorkouts.vue";
 import RecentWorkoutsNew from "@/components/RecentWorkoutsNew.vue";
+import ActiveWorkoutCard from "@/components/ActiveWorkoutCard.vue";
 
 // import { api } from "@/shared/api";
 
@@ -22,6 +23,15 @@ const daysInRow = ref(42);
 const thisWeek = ref(5);
 const totalWorkouts = ref(128); // Новое поле: всего тренировок
 const avgDuration = ref(45);
+
+const activeWorkout = ref({
+  id: 101,
+  name: "Full Body Beginner",
+  duration: "18:40",
+  completedExercises: 2,
+  totalExercises: 5,
+});
+
 // Достаём имя пользователя из initData Telegram
 const userName = computed(() => {
   const user = initData.user();
@@ -104,7 +114,9 @@ function toggleSelect(id: number) {
 }
 
 function handleStart() {
-  if (selectedId.value) {
+  if (activeWorkout.value) {
+    router.push(`/workouts/active`);
+  } else if (selectedId.value) {
     router.push(`/workouts/${selectedId.value}`);
   } else {
     router.push("/workouts");
@@ -160,6 +172,11 @@ onUnmounted(() => {
       subtitle="Готов к сегодняшней тренировке?"
       :letter="userLetter"
       @avatar-click="handleAvatarClick"
+    />
+
+    <ActiveWorkoutCard
+      :workout="activeWorkout"
+      @click="handleStart"
     />
 
     <!-- <StatsBlock :days-in-row="daysInRow" :this-week="thisWeek" />

@@ -24,7 +24,7 @@ defineProps<{ title: string, disclaimer?: string }>();
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 16px;
+  padding: 12px;
   box-sizing: border-box;
   /* margin-top: 80px; */
 }
@@ -58,8 +58,8 @@ defineProps<{ title: string, disclaimer?: string }>();
 .page__bottom-bar {
   position: fixed;
   bottom: 24px;
-  left: 8px;
-  right: 8px;
+  left: 16px;
+  right: 16px;
 
   padding: 4px 4px;
   background: var(--tg-theme-bg-color);
