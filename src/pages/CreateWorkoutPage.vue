@@ -10,11 +10,13 @@ import AppPage from "@/components/AppPage.vue";
 import ScreenHeader from "@/components/ScreenHeader.vue";
 import { triggerHaptic } from "@/shared/utils/haptic";
 
-interface ExerciseInput {
+interface ExerciseItem {
   id: string;
   name: string;
   sets: string;
   reps: string;
+  weight?: string;
+  note?: string;
 }
 
 const router = useRouter();
@@ -34,23 +36,45 @@ const COLORS = [
   "#8e8e93", // Gray
 ];
 
-// Реактивные состояния полей
+// Реактивные состояния
 const name = ref("");
 const description = ref("");
 const selectedColor = ref(COLORS[0]);
-const exercises = ref<ExerciseInput[]>([
-  { id: "1", name: "", sets: "", reps: "" },
-]);
+const exercises = ref<ExerciseItem[]>([]);
 
-// Инициализация при редактировании (моковые данные)
+// Состояние модального окна добавления/редактирования упражнения
+const showExerciseModal = ref(false);
+const editingExerciseId = ref<string | null>(null);
+
+// Поля формы внутри модалки
+const modalForm = ref({
+  name: "",
+  sets: "",
+  reps: "",
+  weight: "",
+  note: "",
+});
+
 onMounted(() => {
   if (isEditing.value) {
     name.value = "Силовая А";
     description.value = "Грудь + Трицепс";
     selectedColor.value = COLORS[1];
     exercises.value = [
-      { id: "1", name: "Жим штанги лежа", sets: "4", reps: "8-10" },
-      { id: "2", name: "Разводка гантелей", sets: "3", reps: "12" },
+      {
+        id: "1",
+        name: "Жим штанги лежа",
+        sets: "4",
+        reps: "8-10",
+        weight: "80 кг",
+      },
+      {
+        id: "2",
+        name: "Разводка гантелей",
+        sets: "3",
+        reps: "12",
+        weight: "16 кг",
+      },
     ];
   }
 });
@@ -65,80 +89,118 @@ function selectColor(color: string) {
   selectedColor.value = color;
 }
 
-function addExercise() {
+// Открытие модалки для НОВОГО упражнения
+function openAddExerciseModal() {
   triggerHaptic("light");
-  const newId = `${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
-  exercises.value.push({ id: newId, name: "", sets: "", reps: "" });
+  editingExerciseId.value = null;
+  modalForm.value = { name: "", sets: "", reps: "", weight: "", note: "" };
+  showExerciseModal.value = true;
 }
 
-function removeExercise(id: string) {
-  triggerHaptic("medium");
-  if (exercises.value.length > 1) {
-    exercises.value = exercises.value.filter((e) => e.id !== id);
+// Открытие модалки для РЕДАКТИРОВАНИЯ существующего
+function openEditExerciseModal(exercise: ExerciseItem) {
+  triggerHaptic("light");
+  editingExerciseId.value = exercise.id;
+  modalForm.value = {
+    name: exercise.name,
+    sets: exercise.sets,
+    reps: exercise.reps,
+    weight: exercise.weight || "",
+    note: exercise.note || "",
+  };
+  showExerciseModal.value = true;
+}
+
+// Сохранение упражнения из модалки в список
+function saveExerciseFromModal() {
+  if (!modalForm.value.name.trim()) {
+    triggerHaptic("medium");
+    showToast({ message: "Введите название упражнения", position: "top" });
+    return;
   }
+
+  triggerHaptic("medium");
+
+  if (editingExerciseId.value) {
+    // Обновляем существующее
+    const index = exercises.value.findIndex(
+      (e) => e.id === editingExerciseId.value
+    );
+    if (index !== -1) {
+      exercises.value[index] = {
+        id: editingExerciseId.value,
+        name: modalForm.value.name.trim(),
+        sets: modalForm.value.sets.trim(),
+        reps: modalForm.value.reps.trim(),
+        weight: modalForm.value.weight.trim(),
+        note: modalForm.value.note.trim(),
+      };
+    }
+  } else {
+    // Добавляем новое
+    exercises.value.push({
+      id: `${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      name: modalForm.value.name.trim(),
+      sets: modalForm.value.sets.trim(),
+      reps: modalForm.value.reps.trim(),
+      weight: modalForm.value.weight.trim(),
+      note: modalForm.value.note.trim(),
+    });
+  }
+
+  showExerciseModal.value = false;
 }
 
-// --- Обработчики Drag & Drop ---
+function removeExercise(id: string, e: Event) {
+  e.stopPropagation(); // Чтобы не открывалась модалка редактирования при клике на корзину
+  triggerHaptic("medium");
+  exercises.value = exercises.value.filter((ex) => ex.id !== id);
+}
+
+// Drag & Drop haptics
 function onDragStart() {
-  triggerHaptic("medium"); // Виброотклик при подхвате элемента
+  triggerHaptic("light");
 }
-
 function onDragEnd() {
-  triggerHaptic("light"); // Легкий отклик при отпускании
+  triggerHaptic("light");
 }
 
-function handleSave() {
+function handleSavePlan() {
   if (!name.value.trim()) {
     triggerHaptic("heavy");
     showToast({ message: "Введите название плана", position: "top" });
     return;
   }
 
-  const validExercises = exercises.value.filter((e) => e.name.trim());
-  if (validExercises.length === 0) {
+  if (exercises.value.length === 0) {
     triggerHaptic("heavy");
     showToast({ message: "Добавьте хотя бы одно упражнение", position: "top" });
     return;
   }
 
   triggerHaptic("medium");
-
-  const payload = {
-    id: planId.value || String(Date.now()),
-    name: name.value.trim(),
-    description: description.value.trim(),
-    color: selectedColor.value,
-    exercises: validExercises.map((e) => ({
-      id: e.id,
-      name: e.name.trim(),
-      sets: e.sets.trim(),
-      reps: e.reps.trim(),
-    })),
-  };
-
-  console.log("Saving plan payload:", payload);
-
   showToast({
     message: isEditing.value ? "План обновлен" : "План создан",
     type: "success",
   });
-
   router.back();
 }
 
-// --- Telegram MainButton ---
+// Telegram MainButton
 onMounted(() => {
   if (mainButton.isMounted()) {
-    mainButton.setText(isEditing.value ? "Сохранить изменения" : "Создать план");
+    mainButton.setText(
+      isEditing.value ? "Сохранить изменения" : "Создать план"
+    );
     mainButton.enable();
     mainButton.show();
-    mainButton.onClick(handleSave);
+    mainButton.onClick(handleSavePlan);
   }
 });
 
 onUnmounted(() => {
   if (mainButton.isMounted()) {
-    mainButton.offClick(handleSave);
+    mainButton.offClick(handleSavePlan);
     mainButton.hide();
   }
 });
@@ -148,7 +210,11 @@ onUnmounted(() => {
   <AppPage title="" :back="false">
     <ScreenHeader
       :title="isEditing ? 'Редактировать план' : 'Новый план'"
-      :subtitle="isEditing ? 'Обновите упражнения и параметры' : 'Соберите шаблон своей тренировки'"
+      :subtitle="
+        isEditing
+          ? 'Обновите параметры плана'
+          : 'Соберите шаблон своей тренировки'
+      "
       :show-back="true"
       @back="handleGoBack"
     />
@@ -167,7 +233,7 @@ onUnmounted(() => {
         </van-cell-group>
       </div>
 
-      <!-- Описание (Опционально) -->
+      <!-- Описание -->
       <div class="form-section">
         <label class="form-label">Описание (опционально)</label>
         <van-cell-group inset class="form-group">
@@ -206,79 +272,177 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <!-- Список упражнений с Drag and Drop -->
+      <!-- Компактный список упражнений в едином van-cell-group -->
       <div class="form-section">
         <div class="section-header">
-          <label class="form-label">Упражнения</label>
-          <button v-ripple type="button" class="add-btn-link" @click="addExercise">
+          <label class="form-label">Упражнения ({{ exercises.length }})</label>
+          <button
+            v-ripple
+            type="button"
+            class="add-btn-link"
+            @click="openAddExerciseModal"
+          >
             <Icon icon="mdi:plus" width="18" height="18" />
             Добавить
           </button>
         </div>
 
-        <draggable
-          v-model="exercises"
-          item-key="id"
-          handle=".drag-handle"
-          animation="200"
-          ghost-class="drag-ghost"
-          drag-class="drag-active"
-          class="exercises-list"
-          @start="onDragStart"
-          @end="onDragEnd"
+        <!-- Пустое состояние -->
+        <div
+          v-if="exercises.length === 0"
+          class="empty-exercises"
+          @click="openAddExerciseModal"
         >
-          <template #item="{ element: exercise, index }">
-            <div class="exercise-item-card">
-              <!-- Поле ввода названия и кнопка удаления -->
-              <div class="exercise-row-top">
-                <div class="drag-handle">
+          <Icon icon="mdi:dumbbell" width="28" height="28" />
+          <span>Нажмите, чтобы добавить упражнение</span>
+        </div>
+
+        <!-- Единый плашечный блок под упражнения -->
+        <van-cell-group v-else inset class="exercises-group">
+          <draggable
+            v-model="exercises"
+            item-key="id"
+            handle=".drag-handle"
+            :animation="220"
+            ghost-class="drag-ghost"
+            drag-class="drag-active"
+            chosen-class="drag-chosen"
+            class="exercises-list"
+            @start="onDragStart"
+            @end="onDragEnd"
+          >
+            <template #item="{ element: exercise }">
+              <div
+                v-ripple
+                class="exercise-row-item"
+                @click="openEditExerciseModal(exercise)"
+              >
+                <!-- Левая иконка перетаскивания (Handle) -->
+                <div class="drag-handle" @click.stop>
                   <Icon icon="mdi:drag-vertical" width="22" height="22" />
                 </div>
 
-                <div class="exercise-name-input">
-                  <input
-                    v-model="exercise.name"
-                    type="text"
-                    :placeholder="`Упражнение #${index + 1}`"
-                    class="custom-input"
-                  />
+                <!-- Основной текст -->
+                <div class="exercise-info">
+                  <span class="exercise-name">{{ exercise.name }}</span>
+                  <div class="exercise-sub">
+                    <span v-if="exercise.sets">{{ exercise.sets }} подх.</span>
+                    <span v-if="exercise.reps"
+                      >• {{ exercise.reps }} повт.</span
+                    >
+                    <span v-if="exercise.weight">• {{ exercise.weight }}</span>
+                  </div>
                 </div>
 
+                <!-- Кнопка удаления -->
                 <button
-                  v-if="exercises.length > 1"
                   type="button"
                   class="remove-btn"
-                  @click="removeExercise(exercise.id)"
+                  @click="removeExercise(exercise.id, $event)"
                 >
                   <Icon icon="mdi:trash-can-outline" width="18" height="18" />
                 </button>
               </div>
-
-              <!-- Поля подходов и повторений -->
-              <div class="exercise-row-bottom">
-                <div class="input-col">
-                  <input
-                    v-model="exercise.sets"
-                    type="text"
-                    placeholder="Подходы"
-                    class="custom-input"
-                  />
-                </div>
-
-                <div class="input-col">
-                  <input
-                    v-model="exercise.reps"
-                    type="text"
-                    placeholder="Повторения / Время, c"
-                    class="custom-input"
-                  />
-                </div>
-              </div>
-            </div>
-          </template>
-        </draggable>
+            </template>
+          </draggable>
+        </van-cell-group>
       </div>
     </div>
+
+    <!-- Telegram BottomSheet (Нижняя шторка добавления/редактирования) -->
+    <van-popup
+      v-model:show="showExerciseModal"
+      position="bottom"
+      round
+      class="exercise-popup"
+    >
+      <div class="popup-content">
+        <div class="popup-header">
+          <h3 class="popup-title">
+            {{
+              editingExerciseId
+                ? "Редактировать упражнение"
+                : "Новое упражнение"
+            }}
+          </h3>
+          <button class="popup-close-btn" @click="showExerciseModal = false">
+            <Icon icon="mdi:close" width="20" height="20" />
+          </button>
+        </div>
+
+        <div class="popup-body">
+          <div class="modal-field">
+            <label class="modal-label">Название *</label>
+            <van-cell-group inset class="form-group">
+              <van-field
+                v-model="modalForm.name"
+                placeholder="Например: Жим штанги лежа"
+                clearable
+                class="app-input"
+              />
+            </van-cell-group>
+          </div>
+
+          <div class="modal-row">
+            <div class="modal-field col">
+              <label class="modal-label">Подходы</label>
+              <van-cell-group inset class="form-group">
+                <van-field
+                  v-model="modalForm.sets"
+                  placeholder="3-4"
+                  class="app-input"
+                />
+              </van-cell-group>
+            </div>
+
+            <div class="modal-field col">
+              <label class="modal-label">Повторения / Время</label>
+              <van-cell-group inset class="form-group">
+                <van-field
+                  v-model="modalForm.reps"
+                  placeholder="8-12"
+                  class="app-input"
+                />
+              </van-cell-group>
+            </div>
+          </div>
+
+          <div class="modal-field">
+            <label class="modal-label">Целевой вес (опционально)</label>
+            <van-cell-group inset class="form-group">
+              <van-field
+                v-model="modalForm.weight"
+                placeholder="Например: 60 кг"
+                class="app-input"
+              />
+            </van-cell-group>
+          </div>
+
+          <div class="modal-field">
+            <label class="modal-label">Заметка к упражнению</label>
+            <van-cell-group inset class="form-group">
+              <van-field
+                v-model="modalForm.note"
+                type="textarea"
+                rows="2"
+                autosize
+                placeholder="Например: Локти близко к корпусу"
+                class="app-input"
+              />
+            </van-cell-group>
+          </div>
+
+          <button
+            v-ripple
+            type="button"
+            class="submit-modal-btn"
+            @click="saveExerciseFromModal"
+          >
+            {{ editingExerciseId ? "Сохранить изменения" : "Добавить в план" }}
+          </button>
+        </div>
+      </div>
+    </van-popup>
   </AppPage>
 </template>
 
@@ -301,7 +465,7 @@ onUnmounted(() => {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--tg-theme-button-color, #8e8e93);
+  color: var(--tg-theme-button-color, #3390ec);
   margin-bottom: 8px;
   padding-left: 4px;
 }
@@ -328,7 +492,6 @@ onUnmounted(() => {
   gap: 2px;
   cursor: pointer;
   padding: 2px 6px;
-  border-radius: 6px;
 }
 
 /* Vant Field кастомизация */
@@ -366,11 +529,7 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform 0.15s ease, border-color 0.15s ease;
-}
-
-.color-circle:active {
-  transform: scale(0.9);
+  transition: transform 0.15s ease;
 }
 
 .color-circle--selected {
@@ -378,108 +537,203 @@ onUnmounted(() => {
   transform: scale(1.08);
 }
 
-/* Карточка упражнения */
+/* --- Единая группа упражнений Vant --- */
+.exercises-group {
+  margin: 0 !important;
+  border-radius: 14px !important;
+  overflow: hidden;
+  background: var(--tg-theme-bg-color, #1c1c1e) !important;
+}
+
 .exercises-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
 }
 
-.exercise-item-card {
-  background: var(--tg-theme-bg-color, #1c1c1e);
-  border-radius: 14px;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-  will-change: transform;
-}
-
-.exercise-row-top {
+.exercise-row-item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--tg-theme-bg-color, #1c1c1e);
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.08);
+}
+
+.exercise-row-item:last-child {
+  border-bottom: none;
 }
 
 .drag-handle {
   color: var(--tg-theme-hint-color, #8e8e93);
   display: flex;
   align-items: center;
+  justify-content: center;
   cursor: grab;
-  padding: 4px;
-  touch-action: none; /* Предотвращает скролл страницы при захвате иконки на смартфоне */
+  touch-action: none;
+  padding: 2px;
 }
 
-.drag-handle:active {
-  cursor: grabbing;
-}
-
-.exercise-name-input {
+.exercise-info {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.exercise-name {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--tg-theme-text-color, #ffffff);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.exercise-sub {
+  font-size: 12px;
+  color: var(--tg-theme-hint-color, #8e8e93);
+  display: flex;
+  gap: 4px;
 }
 
 .remove-btn {
-  background: rgba(255, 59, 48, 0.12);
-  color: #ff3b30;
+  background: transparent;
+  color: var(--tg-theme-hint-color, #8e8e93);
   border: none;
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
+  padding: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  flex-shrink: 0;
+  border-radius: 6px;
 }
 
-.exercise-row-bottom {
-  display: flex;
-  gap: 10px;
-  padding-left: 38px; /* Выравнивание по линии текстового инпута с учетом иконки drag */
+.remove-btn:active {
+  color: #ff3b30;
 }
 
-.input-col {
-  flex: 1;
+.empty-exercises {
+  background: var(--tg-theme-bg-color, #1c1c1e);
+  border: 1px dashed var(--tg-theme-hint-color, #8e8e93);
+  border-radius: 12px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-}
-
-/* Кастомные инпуты */
-.custom-input {
-  width: 100%;
-  box-sizing: border-box;
-  background: var(--tg-theme-secondary-bg-color, #000000);
-  border: 1px solid var(--tg-theme-secondary-bg-color, #8e8e93);
-  border-radius: 8px;
-  padding: 8px 10px;
-  font-size: 14px;
-  color: var(--tg-theme-text-color, #ffffff);
-  outline: none;
-}
-
-.custom-input::placeholder {
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   color: var(--tg-theme-hint-color, #8e8e93);
+  font-size: 13px;
+  cursor: pointer;
 }
 
-.custom-input::-webkit-input-placeholder {
-  color: var(--tg-theme-hint-color, #8e8e93);
+/* --- Нативная анимация перетаскивания (iOS / Telegram) --- */
+.drag-chosen {
+  background: var(--tg-theme-secondary-bg-color, #2c2c2e) !important;
 }
 
-/* --- Стили для Drag and Drop --- */
-/* Элемент-полупрозрачный пустой блок на старом месте */
 .drag-ghost {
-  opacity: 0.3;
-  border: 2px dashed var(--tg-theme-button-color, #3390ec);
-  background: transparent !important;
+  opacity: 0.15 !important;
+  background: var(--tg-theme-secondary-bg-color, #000000) !important;
 }
 
-/* Перетаскиваемый карточка под пальцем */
 .drag-active {
-  opacity: 0.95;
-  transform: scale(1.02);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  z-index: 999;
+  opacity: 0.98;
+  transform: scale(1.03) !important;
+  border-radius: 12px !important;
+  border-bottom: none !important;
+  background: var(--tg-theme-bg-color, #2c2c2e) !important;
+  box-shadow:
+    0 14px 28px rgba(0, 0, 0, 0.4),
+    0 6px 10px rgba(0, 0, 0, 0.25) !important;
+  z-index: 99999 !important;
+}
+
+.exercises-list > * {
+  transition: transform 0.22s cubic-bezier(0.2, 0, 0, 1) !important;
+}
+
+/* --- Telegram BottomSheet --- */
+.exercise-popup {
+  background: var(--tg-theme-secondary-bg-color, #1c1c1e) !important;
+  max-height: 85vh;
+}
+
+.popup-content {
+  padding: 20px 16px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.popup-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--tg-theme-text-color, #ffffff);
+  margin: 0;
+}
+
+.popup-close-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--tg-theme-hint-color, #8e8e93);
+  cursor: pointer;
+}
+
+.popup-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.modal-row {
+  display: flex;
+  gap: 10px;
+}
+
+.modal-row .col {
+  flex: 1;
+}
+
+.modal-label {
+  font-size: 12px;
+  color: var(--tg-theme-hint-color, #8e8e93);
+  font-weight: 500;
+}
+
+.submit-modal-btn {
+  margin-top: 8px;
+  width: 100%;
+  height: 46px;
+  border-radius: 12px;
+  border: none;
+  background: var(--tg-theme-button-color, #3390ec);
+  color: var(--tg-theme-button-text-color, #ffffff);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
 }
 </style>
