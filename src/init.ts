@@ -107,8 +107,8 @@ export async function init(options: {
     if (viewport.mount.isAvailable()) {
       viewport.mount().then(() => {
         viewport.bindCssVars();
-        //viewport.expand(); // <-- Разворачивает Mini App на весь экран штатно
-        viewport.requestFullscreen(); // <-- Разворачивает Mini App на весь экран штатно
+        viewport.expand(); // <-- Разворачивает Mini App на весь экран штатно
+        // viewport.requestFullscreen(); // <-- Разворачивает Mini App на весь экран штатно
       });
     }
   }

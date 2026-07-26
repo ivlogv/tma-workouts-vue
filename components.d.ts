@@ -28,6 +28,7 @@ declare module 'vue' {
     VanCell: typeof import('vant/es')['Cell']
     VanCellGroup: typeof import('vant/es')['CellGroup']
     VanConfigProvider: typeof import('vant/es')['ConfigProvider']
+    VanField: typeof import('vant/es')['Field']
     WorkoutPlanCard: typeof import('./src/components/WorkoutPlanCard.vue')['default']
     WorkoutPlanGallery: typeof import('./src/components/WorkoutPlanGallery.vue')['default']
   }

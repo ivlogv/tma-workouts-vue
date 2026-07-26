@@ -134,7 +134,7 @@ function handleStart() {
     triggerHaptic("medium");
     router.push(`/workouts/${selectedId.value}`);
   } else {
-    router.push("/workouts");
+    router.push("/plans");
   }
 }
 

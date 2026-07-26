@@ -12,6 +12,8 @@
   --van-cell-font-size: 13px;
   --van-cell-line-height: 1.5;
   --van-cell-active-color: rgba(255,255,255, 0.1);
+
+  --van-field-placeholder-text-color: var(--tg-theme-hint-color);
 }
 
 body {

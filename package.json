@@ -22,10 +22,10 @@
     "axios": "^1.13.4",
     "eruda": "^3.4.3",
     "pinia": "^3.0.4",
-    "telegram-ui-vue": "^1.6.3",
     "vant": "^4.9.22",
     "vue": "^3.5.26",
-    "vue-router": "^4.6.4"
+    "vue-router": "^4.6.4",
+    "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.5",
@@ -35,7 +35,7 @@
     "@vue/eslint-config-typescript": "^14.6.0",
     "@vue/tsconfig": "^0.8.1",
     "cross-env": "^10.1.0",
-    "eslint": "^9.39.2",
+    "eslint": "^10.8.0",
     "eslint-plugin-vue": "^10.6.2",
     "gh-pages": "^6.3.0",
     "npm-run-all2": "^8.0.4",

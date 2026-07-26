@@ -5,6 +5,7 @@ import HistoryPage from "@/pages/HistoryPage.vue";
 import WorkoutPlansPage from "@/pages/WorkoutPlansPage.vue";
 import WorkoutsPage from "@/pages/WorkoutsPage.vue";
 import StatsPage from "@/pages/StatsPage.vue";
+import CreateWorkoutPage from "@/pages/CreateWorkoutPage.vue";
 // import InitDataPage from "@/pages/InitDataPage.vue";
 // import ThemeParamsPage from "@/pages/ThemeParamsPage.vue";
 // import LaunchParamsPage from "@/pages/LaunchParamsPage.vue";
@@ -64,6 +65,15 @@ export const routes = [
     component: StatsPage,
     meta: {
       title: "Stats Page",
+      icon: "",
+    },
+  },
+  {
+    path: "/plans/create",
+    name: "create-plan",
+    component: CreateWorkoutPage,
+    meta: {
+      title: "Create Plan",
       icon: "",
     },
   },
