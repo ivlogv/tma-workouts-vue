@@ -5,6 +5,7 @@ defineProps<{
   title: string;
   subtitle?: string;
   showBack?: boolean;
+  letter: string;
 }>();
 
 const emit = defineEmits<{
@@ -41,7 +42,7 @@ const emit = defineEmits<{
           type="button"
           @click="emit('avatar-click')"
         >
-          <span>U</span>
+          <span>{{ letter }}</span>
         </button>
       </slot>
     </div>

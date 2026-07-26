@@ -9,7 +9,7 @@ import AppPage from "@/components/AppPage.vue";
 import ScreenHeader from "@/components/ScreenHeader.vue";
 import BottomNav from "@/components/BottomNav.vue";
 import StatBlock from "@/components/StatBlock.vue";
-import RecentWorkouts from "@/components/RecentWorkouts.vue";
+// import RecentWorkouts from "@/components/RecentWorkouts.vue";
 import RecentWorkoutsNew from "@/components/RecentWorkoutsNew.vue";
 
 // import { api } from "@/shared/api";
@@ -84,6 +84,12 @@ const workouts = [
     date: "16.03.2026",
     icon: "mdi:dumbbell",
   },
+  {
+    id: 4,
+    name: "Full Body Beginner",
+    date: "16.03.2026",
+    icon: "mdi:dumbbell",
+  },
 ];
 
 const buttonText = computed(() => {
@@ -94,7 +100,7 @@ const selectedId = ref<number | undefined>(undefined);
 
 function toggleSelect(id: number) {
   selectedId.value = selectedId.value === id ? undefined : id;
-  showToast(`${mainButton.state().text}`);
+  // showToast(`${mainButton.state().text}`);
 }
 
 function handleStart() {
@@ -167,16 +173,17 @@ onUnmounted(() => {
       :avg-duration="avgDuration"
     />
 
-    <RecentWorkouts
+    <!-- <RecentWorkouts
       :workouts="workouts"
       :selected-id="selectedId"
       @select="toggleSelect"
-    />
+    /> -->
 
     <RecentWorkoutsNew
       :workouts="workouts"
       :selected-id="selectedId"
       @select="toggleSelect"
+      @open-history="router.push('/history')"
     />
 
     <van-button

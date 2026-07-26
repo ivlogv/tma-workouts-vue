@@ -18,7 +18,10 @@ withDefaults(
   { workouts: () => [] },
 );
 
-const emit = defineEmits<(e: "select", id: number) => void>();
+const emit = defineEmits<{
+  (e: "select", id: number): void;
+  (e: "open-history"): void;
+}>();
 
 // Кастомная легкая директива Ripple
 const vRipple: Directive = {
@@ -53,6 +56,13 @@ function handleClick(id: number) {
   }
   emit("select", id);
 }
+
+function handleHistoryClick() {
+  if (hapticFeedback.isSupported()) {
+    hapticFeedback.impactOccurred("light");
+  }
+  emit("open-history");
+}
 </script>
 
 <template>
@@ -81,6 +91,20 @@ function handleClick(id: number) {
         <template #right-icon>
           <div v-if="w.icon" class="workout-icon">
             <Icon :icon="w.icon" width="22" height="22" />
+          </div>
+        </template>
+      </van-cell>
+
+      <!-- Инлайн-кнопка перехода к истории (последний элемент группы) -->
+      <van-cell
+        v-ripple
+        class="history-cell"
+        @click="handleHistoryClick"
+      >
+        <template #title>
+          <div class="history-content">
+            <span>Вся история</span>
+            <Icon icon="lucide:history" width="16" height="16" />
           </div>
         </template>
       </van-cell>
@@ -116,13 +140,20 @@ function handleClick(id: number) {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Разделительная линия между ячейками */
+:deep(.van-cell::after) {
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+  left: 16px;
+  right: 16px;
+}
+
 /* Стили самой волны */
 :deep(.v-ripple-effect) {
   position: absolute;
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.15); /* Мягкая белая волна */
   transform: scale(0);
-  animation: ripple 0.5s ease-out;
+  animation: ripple 0.9s ease-out;
   pointer-events: none;
 }
 
@@ -159,6 +190,22 @@ function handleClick(id: number) {
 :deep(.van-cell.active) .workout-name,
 :deep(.van-cell.active) .workout-icon {
   color: var(--tg-theme-button-color, #3390ec);
+}
+
+/* Стилизация кнопки истории */
+/* .history-cell {
+  background-color: rgba(255, 255, 255, 0.02);
+} */
+
+.history-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--tg-theme-link-color, #3390ec);
+  /* padding: 2px 0; */
 }
 
 .empty {
