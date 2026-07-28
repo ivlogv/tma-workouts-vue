@@ -17,8 +17,14 @@ import { triggerHaptic } from "@/shared/utils/haptic";
 
 import { authApi } from "@/shared/api/auth";
 import type { UserResponse } from "@/shared/api/types";
+import { useWorkoutStore } from "@/stores/workouts";
+import { usePlansStore } from "@/stores/plans";
+import { useHistoryStore } from "@/stores/history";
 
 const router = useRouter();
+const workoutStore = useWorkoutStore();
+const plansStore = usePlansStore();
+const historyStore = useHistoryStore();
 
 const isAuthLoading = ref(false);
 const currentUser = ref<UserResponse | null>(null);
@@ -64,7 +70,8 @@ async function authenticateUser() {
 
     let errorMessage = "Ошибка авторизации";
     if (axios.isAxiosError(error)) {
-      errorMessage = error.response?.data?.detail || error.message || errorMessage;
+      errorMessage =
+        error.response?.data?.detail || error.message || errorMessage;
     } else if (error instanceof Error) {
       errorMessage = error.message;
     }
@@ -82,6 +89,11 @@ async function authenticateUser() {
 onMounted(async () => {
   // 1. Первым делом пробуем авторизоваться на бэкенде
   await authenticateUser();
+  await Promise.all([
+    workoutStore.checkActiveSession(),
+    plansStore.fetchPlans(),
+    historyStore.fetchHistory(3),
+  ]);
 
   // 2. Настраиваем MainButton
   if (mainButton.isMounted()) {
@@ -157,14 +169,25 @@ function handleStart() {
   }
 }
 
+function handleContinueActive() {
+  if (workoutStore.activeSession) {
+    router.push(`/workout/${workoutStore.activeSession.id}`);
+  }
+}
+
 function handleAvatarClick() {
   showToast(`Профиль: ${userName.value}`);
   triggerHaptic("light");
 }
 
-function handlePlanClick(id: string | number) {
+async function handlePlanClick(id: string | number) {
   triggerHaptic("light");
-  router.push(`/plans/${id}`);
+  try {
+    const session = await workoutStore.startWorkoutFromPlan(id as number);
+    router.push(`/workout/${session.id}`);
+  } catch {
+    // Ошибка обработана в сторе
+  }
 }
 
 function handleMorePlans() {
@@ -219,7 +242,11 @@ onUnmounted(() => {
       @avatar-click="handleAvatarClick"
     />
 
-    <ActiveWorkoutCard :workout="activeWorkout" @click="handleStart" />
+    <ActiveWorkoutCard
+      v-if="workoutStore.isSessionActive && workoutStore.activeSession"
+      :workout="workoutStore.activeSession"
+      @click="handleContinueActive"
+    />
 
     <!-- <StatsBlock :days-in-row="daysInRow" :this-week="thisWeek" />
 
@@ -239,14 +266,15 @@ onUnmounted(() => {
     /> -->
 
     <RecentWorkoutsNew
-      :workouts="workouts"
+      :workouts="historyStore.sessions"
       :selected-id="selectedId"
+      :is-loading="isAuthLoading"
       @select="toggleSelect"
       @open-history="router.push('/history')"
     />
 
     <WorkoutPlanGallery
-      :plans="myPlans"
+      :plans="plansStore.plans"
       @plan-click="handlePlanClick"
       @more-click="handleMorePlans"
     />

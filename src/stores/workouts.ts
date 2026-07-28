@@ -24,7 +24,9 @@ export const useWorkoutStore = defineStore("workout", () => {
     return activeSession.value?.status === "in_progress";
   });
 
-  const sessionTitle = computed(() => activeSession.value?.title || "Тренировка");
+  const sessionTitle = computed(
+    () => activeSession.value?.title || "Тренировка",
+  );
 
   // Подсчет процента выполнения тренировки для прогресс-бара
   const progressPercentage = computed(() => {
@@ -73,6 +75,27 @@ export const useWorkoutStore = defineStore("workout", () => {
   }
 
   /**
+   * Проверить, есть ли у пользователя незавершенная тренировка
+   */
+  async function checkActiveSession() {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      const session = await workoutsApi.getActiveSession();
+      activeSession.value = session;
+
+      if (session) {
+        initLocalSets(session);
+      }
+    } catch (e: any) {
+      console.error("Ошибка при получении активной сессии:", e);
+      error.value = "Не удалось проверить активную тренировку";
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /**
    * Восстановить/загрузить сессию (например, при запуске приложения)
    */
   async function loadSession(sessionId: number) {
@@ -83,7 +106,8 @@ export const useWorkoutStore = defineStore("workout", () => {
       activeSession.value = session;
       initLocalSets(session);
     } catch (e: any) {
-      error.value = e.response?.data?.detail || "Ошибка при загрузке тренировки";
+      error.value =
+        e.response?.data?.detail || "Ошибка при загрузке тренировки";
       console.error(e);
     } finally {
       isLoading.value = false;
@@ -107,7 +131,9 @@ export const useWorkoutStore = defineStore("workout", () => {
    */
   function addSetToExercise(exerciseId: number) {
     // Находим максимальный номер подхода для этого упражнения
-    const existingSets = currentSets.value.filter((s) => s.exercise_id === exerciseId);
+    const existingSets = currentSets.value.filter(
+      (s) => s.exercise_id === exerciseId,
+    );
     const nextSetNumber = existingSets.length + 1;
 
     // Копируем вес и повторения с предыдущего подхода (если он был) для удобства
@@ -133,7 +159,10 @@ export const useWorkoutStore = defineStore("workout", () => {
       const updateData: WorkoutSessionUpdate = {
         sets: currentSets.value,
       };
-      const updated = await workoutsApi.updateSession(activeSession.value.id, updateData);
+      const updated = await workoutsApi.updateSession(
+        activeSession.value.id,
+        updateData,
+      );
       activeSession.value = updated;
     } catch (e: any) {
       console.error("Ошибка при сохранении тренировки:", e);
@@ -157,7 +186,10 @@ export const useWorkoutStore = defineStore("workout", () => {
         sets: currentSets.value,
       };
 
-      const updated = await workoutsApi.updateSession(activeSession.value.id, updateData);
+      const updated = await workoutsApi.updateSession(
+        activeSession.value.id,
+        updateData,
+      );
       activeSession.value = updated;
     } catch (e: any) {
       error.value = "Не удалось завершить тренировку";
@@ -183,6 +215,24 @@ export const useWorkoutStore = defineStore("workout", () => {
     }
   }
 
+  // Начать тренировку из плана (по ID плана)
+  async function startWorkoutFromPlan(planId: number) {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      // Передаем plan_id в WorkoutSessionCreate
+      const newSession = await workoutsApi.createSession({ plan_id: planId });
+      activeSession.value = newSession;
+      return newSession;
+    } catch (e: unknown) {
+      console.error("Ошибка при старте тренировки из плана:", e);
+      error.value = "Не удалось начать тренировку";
+      throw e;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   return {
     activeSession,
     templates,
@@ -195,10 +245,12 @@ export const useWorkoutStore = defineStore("workout", () => {
     progressPercentage,
     fetchTemplates,
     startWorkout,
+    checkActiveSession,
     loadSession,
     updateLocalSet,
     addSetToExercise,
     saveProgress,
     finishWorkout,
+    startWorkoutFromPlan,
   };
 });

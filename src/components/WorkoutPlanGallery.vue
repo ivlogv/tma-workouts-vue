@@ -2,17 +2,11 @@
 import { computed } from "vue";
 import { Icon } from "@iconify/vue";
 import WorkoutPlanCard from "./WorkoutPlanCard.vue";
-
-export interface WorkoutPlan {
-  id: string | number;
-  name: string;
-  exercises: unknown[];
-  color?: string;
-}
+import type { WorkoutPlanResponse } from "@/shared/api/types"; // Путь к вашим типам API
 
 const props = withDefaults(
   defineProps<{
-    plans?: WorkoutPlan[];
+    plans?: WorkoutPlanResponse[];
     maxItems?: number;
   }>(),
   {
@@ -22,7 +16,7 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-  (e: "plan-click", planId: string | number): void;
+  (e: "plan-click", planId: number): void;
   (e: "more-click"): void;
 }>();
 
@@ -40,12 +34,11 @@ const displayPlans = computed(() => props.plans.slice(0, props.maxItems));
         :key="plan.id"
         :id="plan.id"
         :name="plan.name"
-        :exercise-count="plan.exercises.length"
-        :color="plan.color"
+        :exercise-count="plan.plan_exercises?.length ?? 0"
         @click="emit('plan-click', plan.id)"
       />
 
-      <!-- Пунктирная кнопка "Ещё / Создать" -->
+      <!-- Пунктирная кнопка "Ещё / Все программы" -->
       <button v-ripple class="more-card" type="button" @click="emit('more-click')">
         <Icon icon="lucide:plus" width="28" height="28" class="more-icon" />
         <span class="more-text">Все программы</span>
@@ -74,13 +67,13 @@ const displayPlans = computed(() => props.plans.slice(0, props.maxItems));
   gap: 12px;
   overflow-x: auto;
 
-  /* Важно: растягиваем на ширину с учетом отрицательных отступов */
+  /* Растягиваем с учетом боковых отступов */
   width: calc(100% + 32px);
-  margin-left: -12px;
-  margin-right: -12px;
+  margin-left: -16px;
+  margin-right: -16px;
 
-  /* Задаем левый отступ, а правый компенсируем через ::after ниже */
-  padding-left: 12px;
+  /* Задаем левый отступ, а правый компенсируем через ::after */
+  padding-left: 16px;
   box-sizing: border-box;
 
   -webkit-overflow-scrolling: touch;
@@ -89,18 +82,17 @@ const displayPlans = computed(() => props.plans.slice(0, props.maxItems));
   -ms-overflow-style: none; /* IE / Edge */
 }
 
-/* Псевдоэлемент-распорка для ХВОСТА скролла */
-/* Он решает проблему, когда padding-right в overflow-x: auto игнорируется браузерами */
+/* Псевдоэлемент-распорка для хвоста скролла */
 .workout-gallery::after {
   content: "";
-  flex: 0 0 12px; /* 12px (gap) + 4px = 16px идеального отступа справа */
+  flex: 0 0 16px;
 }
 
 .workout-gallery::-webkit-scrollbar {
   display: none; /* Chrome / Safari / Opera */
 }
 
-/* Кнопка "Ещё" в конца списка */
+/* Кнопка "Ещё" в конце списка */
 .more-card {
   min-width: 130px;
   width: 130px;

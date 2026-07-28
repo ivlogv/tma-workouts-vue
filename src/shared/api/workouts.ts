@@ -15,6 +15,11 @@ export const workoutsApi = {
     return res.data;
   },
 
+  getActiveSession: async (): Promise<WorkoutSessionResponse | null> => {
+    const res = await api.get<WorkoutSessionResponse | null>("/workouts/active");
+    return res.data;
+  },
+
   // Получить активную или конкретную сессию по ID
   getSession: async (sessionId: number) => {
     const res = await api.get<WorkoutSessionResponse>(`/workouts/${sessionId}`);

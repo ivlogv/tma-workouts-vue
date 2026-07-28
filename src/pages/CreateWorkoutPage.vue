@@ -373,7 +373,7 @@ onUnmounted(() => {
         <div class="popup-body">
           <div class="modal-field">
             <label class="modal-label">Название *</label>
-            <van-cell-group inset class="form-group">
+            <van-cell-group inset class="modal-form-group">
               <van-field
                 v-model="modalForm.name"
                 placeholder="Например: Жим штанги лежа"
@@ -386,7 +386,7 @@ onUnmounted(() => {
           <div class="modal-row">
             <div class="modal-field col">
               <label class="modal-label">Подходы</label>
-              <van-cell-group inset class="form-group">
+              <van-cell-group inset class="modal-form-group">
                 <van-field
                   v-model="modalForm.sets"
                   placeholder="3-4"
@@ -397,7 +397,7 @@ onUnmounted(() => {
 
             <div class="modal-field col">
               <label class="modal-label">Повторения / Время</label>
-              <van-cell-group inset class="form-group">
+              <van-cell-group inset class="modal-form-group">
                 <van-field
                   v-model="modalForm.reps"
                   placeholder="8-12"
@@ -409,7 +409,7 @@ onUnmounted(() => {
 
           <div class="modal-field">
             <label class="modal-label">Целевой вес (опционально)</label>
-            <van-cell-group inset class="form-group">
+            <van-cell-group inset class="modal-form-group">
               <van-field
                 v-model="modalForm.weight"
                 placeholder="Например: 60 кг"
@@ -420,7 +420,7 @@ onUnmounted(() => {
 
           <div class="modal-field">
             <label class="modal-label">Заметка к упражнению</label>
-            <van-cell-group inset class="form-group">
+            <van-cell-group inset class="modal-form-group">
               <van-field
                 v-model="modalForm.note"
                 type="textarea"
@@ -500,6 +500,13 @@ onUnmounted(() => {
   border-radius: 14px !important;
   overflow: hidden;
   background: var(--tg-theme-bg-color, #1c1c1e) !important;
+}
+
+.modal-form-group {
+  margin: 0 !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+  background: var(--tg-theme-secondary-bg-color, #1c1c1e) !important;
 }
 
 .app-input {
@@ -660,7 +667,7 @@ onUnmounted(() => {
 
 /* --- Telegram BottomSheet --- */
 .exercise-popup {
-  background: var(--tg-theme-secondary-bg-color, #1c1c1e) !important;
+  background: var(--tg-theme-bg-color, #1c1c1e) !important;
   max-height: 85vh;
 }
 

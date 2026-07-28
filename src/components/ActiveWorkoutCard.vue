@@ -1,19 +1,12 @@
 <script setup lang="ts">
-import { triggerHaptic } from "@/shared/utils/haptic";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { Icon } from "@iconify/vue";
+import { triggerHaptic } from "@/shared/utils/haptic";
+import type { WorkoutSessionResponse } from "@/shared/api/types";
 
-export interface ActiveWorkout {
-  id?: number | string;
-  title?: string;
-  name?: string;
-  duration?: string | number;
-  completedExercises?: number;
-  totalExercises?: number;
-}
-
-withDefaults(
+const props = withDefaults(
   defineProps<{
-    workout?: ActiveWorkout | null;
+    workout?: WorkoutSessionResponse | null;
   }>(),
   {
     workout: null,
@@ -24,6 +17,67 @@ const emit = defineEmits<{
   (e: "click"): void;
 }>();
 
+// --- Таймер длительности ---
+const elapsedSeconds = ref(0);
+let timerInterval: ReturnType<typeof setInterval> | null = null;
+
+function updateElapsedTime() {
+  if (!props.workout?.started_at) {
+    elapsedSeconds.value = 0;
+    return;
+  }
+  const start = new Date(props.workout.started_at).getTime();
+  const now = Date.now();
+  elapsedSeconds.value = Math.max(0, Math.floor((now - start) / 1000));
+}
+
+onMounted(() => {
+  updateElapsedTime();
+  timerInterval = setInterval(updateElapsedTime, 1000);
+});
+
+onUnmounted(() => {
+  if (timerInterval) clearInterval(timerInterval);
+});
+
+// Форматирование времени (например, "12:45" или "1:05:20")
+const formattedDuration = computed(() => {
+  const totalSec = elapsedSeconds.value;
+  const hours = Math.floor(totalSec / 3600);
+  const minutes = Math.floor((totalSec % 3600) / 60);
+  const seconds = totalSec % 60;
+
+  const pad = (num: number) => String(num).padStart(2, "0");
+
+  if (hours > 0) {
+    return `${hours}:${pad(minutes)}:${pad(seconds)}`;
+  }
+  return `${pad(minutes)}:${pad(seconds)}`;
+});
+
+// --- Вычисление количества упражнений ---
+const exercisesSummary = computed(() => {
+  if (!props.workout?.sets || props.workout.sets.length === 0) {
+    return "0 упражнений";
+  }
+
+  // Считаем уникальные exercise_id из имеющихся подходов
+  const uniqueExerciseIds = new Set(
+    props.workout.sets.map((s) => s.exercise_id),
+  );
+  const count = uniqueExerciseIds.size;
+
+  // Небольшое склонение слова для красоты
+  if (count === 1) return "1 упражнение";
+  if (count >= 2 && count <= 4) return `${count} упражнения`;
+  return `${count} упражнений`;
+});
+
+// Название тренировки или фоллбэк
+const sessionTitle = computed(() => {
+  return props.workout?.title || "Тренировка";
+});
+
 function handleClick() {
   triggerHaptic("light");
   emit("click");
@@ -31,29 +85,22 @@ function handleClick() {
 </script>
 
 <template>
-  <!-- Просто вешаем v-ripple на любой элемент -->
   <div v-if="workout" v-ripple class="active-banner" @click="handleClick">
     <div class="active-banner__main">
       <div class="active-banner__header">
         <span class="pulse-dot"></span>
         <span class="active-banner__title">
-          {{ workout.title || workout.name || "Тренировка" }}
+          {{ sessionTitle }}
         </span>
       </div>
 
       <div class="active-banner__sub">
-        <span v-if="workout.duration" class="meta-item">
+        <span class="meta-item">
           <Icon icon="lucide:timer" width="12" height="12" />
-          {{ workout.duration }}
+          {{ formattedDuration }}
         </span>
-        <span
-          v-if="
-            workout.completedExercises !== undefined &&
-            workout.totalExercises !== undefined
-          "
-          class="meta-item"
-        >
-          • {{ workout.completedExercises }}/{{ workout.totalExercises }} упражнений
+        <span class="meta-item">
+          • {{ exercisesSummary }}
         </span>
       </div>
     </div>
