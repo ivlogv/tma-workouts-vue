@@ -47,6 +47,8 @@ jobs:
         run: pnpm install
 
       - name: Build
+        env:
+          VITE_API_URL: https://compete-newfoundland-combat-filme.trycloudflare.com/api/v1
         run: pnpm run build
 
       - name: Setup Pages
