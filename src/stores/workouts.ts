@@ -1,15 +1,17 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import { workoutsApi } from "@/shared/api/workouts";
+import { workoutsApi, plansApi } from "@/shared/api/workouts";
 import type {
   WorkoutSessionResponse,
   WorkoutSetCreate,
   WorkoutSessionUpdate,
+  WorkoutPlanResponse,
 } from "@/shared/api/types";
 
 export const useWorkoutStore = defineStore("workout", () => {
   // --- STATE ---
   const activeSession = ref<WorkoutSessionResponse | null>(null);
+  const templates = ref<WorkoutPlanResponse[]>([]);
   const isLoading = ref(false);
   const isSaving = ref(false);
   const error = ref<string | null>(null);
@@ -32,6 +34,23 @@ export const useWorkoutStore = defineStore("workout", () => {
   });
 
   // --- ACTIONS ---
+
+  /**
+   * Загрузить шаблоны/планы тренировок
+   */
+  async function fetchTemplates() {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      const data = await plansApi.getPlans();
+      templates.value = data;
+    } catch (e: any) {
+      error.value = e.response?.data?.detail || "Ошибка при загрузке шаблонов";
+      console.error(e);
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
   /**
    * Начать новую тренировку (по ID плана или без него)
@@ -166,6 +185,7 @@ export const useWorkoutStore = defineStore("workout", () => {
 
   return {
     activeSession,
+    templates,
     currentSets,
     isLoading,
     isSaving,
@@ -173,6 +193,7 @@ export const useWorkoutStore = defineStore("workout", () => {
     isSessionActive,
     sessionTitle,
     progressPercentage,
+    fetchTemplates,
     startWorkout,
     loadSession,
     updateLocalSet,

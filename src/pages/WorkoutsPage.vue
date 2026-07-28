@@ -29,8 +29,8 @@ const hasTemplates = computed(() => store.templates.length > 0);
         <van-cell
           v-for="item in store.templates"
           :key="item.id"
-          :title="item.title"
-          :label="item.description"
+          :title="item.name"
+          :label="item.description ?? ''"
           is-link to="workouts/{{ item.id }}"
         />
       </van-cell-group>
