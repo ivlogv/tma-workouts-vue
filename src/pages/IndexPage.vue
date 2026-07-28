@@ -3,7 +3,7 @@ import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import { showToast } from "vant";
 import { initData, mainButton } from "@tma.js/sdk-vue";
-// import axios from "axios";
+import axios from "axios";
 
 import AppPage from "@/components/AppPage.vue";
 import ScreenHeader from "@/components/ScreenHeader.vue";
@@ -15,11 +15,13 @@ import ActiveWorkoutCard from "@/components/ActiveWorkoutCard.vue";
 import WorkoutPlanGallery from "@/components/WorkoutPlanGallery.vue";
 import { triggerHaptic } from "@/shared/utils/haptic";
 
-// import { api } from "@/shared/api";
+import { authApi } from "@/shared/api/auth";
+import type { UserResponse } from "@/shared/api/types";
 
 const router = useRouter();
 
 const isAuthLoading = ref(false);
+const currentUser = ref<UserResponse | null>(null);
 
 const daysInRow = ref(42);
 const thisWeek = ref(5);
@@ -36,6 +38,9 @@ const activeWorkout = ref({
 
 // Достаём имя пользователя из initData Telegram
 const userName = computed(() => {
+  if (currentUser.value?.first_name) {
+    return currentUser.value.first_name;
+  }
   const user = initData.user();
   return user?.first_name || "Атлет";
 });
@@ -48,33 +53,47 @@ const userLetter = computed(() => {
 // Динамический заголовок с приветствием
 const headerTitle = computed(() => `Привет, ${userName.value}! 👋`);
 
+async function authenticateUser() {
+  try {
+    isAuthLoading.value = true;
+    const user = await authApi.loginOrRegister();
+    currentUser.value = user;
+    console.log("Успешная авторизация в FastAPI:", user);
+  } catch (error: any) {
+    console.error("Ошибка при авторизации:", error);
+
+    let errorMessage = "Ошибка авторизации";
+    if (axios.isAxiosError(error)) {
+      errorMessage = error.response?.data?.detail || error.message || errorMessage;
+    } else if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+
+    showToast({
+      type: "fail",
+      message: errorMessage,
+    });
+  } finally {
+    isAuthLoading.value = false;
+  }
+}
+
 // Выполняем авторизацию при загрузке страницы
-// onMounted(async () => {
-//   try {
-//     isAuthLoading.value = true;
+onMounted(async () => {
+  // 1. Первым делом пробуем авторизоваться на бэкенде
+  await authenticateUser();
 
-//     // Запрос на эндпоинт авторизации Telegram
-//     const response = await api.post("/auth/telegram");
-//     console.log("Авторизация прошла успешно:", response.data);
-//   } catch (error) {
-//     console.error("Ошибка при авторизации:", error);
-
-//     let errorMessage = "Ошибка авторизации";
-//     if (axios.isAxiosError(error)) {
-//       errorMessage =
-//         error.response?.data?.detail || error.message || errorMessage;
-//     } else if (error instanceof Error) {
-//       errorMessage = error.message;
-//     }
-
-//     showToast({
-//       type: "fail",
-//       message: errorMessage,
-//     });
-//   } finally {
-//     isAuthLoading.value = false;
-//   }
-// });
+  // 2. Настраиваем MainButton
+  if (mainButton.isMounted()) {
+    mainButton.setText(buttonText.value);
+    mainButton.setParams({
+      hasShineEffect: true,
+    });
+    mainButton.enable();
+    mainButton.show();
+    mainButton.onClick(handleStart);
+  }
+});
 
 // Моковые данные для последних тренировок
 const workouts = [

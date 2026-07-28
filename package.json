@@ -13,7 +13,8 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
-    "lint:fix": "eslint . --report-unused-disable-directives --max-warnings 0 --fix"
+    "lint:fix": "eslint . --report-unused-disable-directives --max-warnings 0 --fix",
+    "generate-api": "openapi-typescript http://localhost:8000/openapi.json -o src/shared/api/schema.ts"
   },
   "dependencies": {
     "@iconify/vue": "^5.0.0",
@@ -39,6 +40,7 @@
     "eslint-plugin-vue": "^10.6.2",
     "gh-pages": "^6.3.0",
     "npm-run-all2": "^8.0.4",
+    "openapi-typescript": "^7.13.0",
     "typescript": "~5.9.3",
     "unplugin-auto-import": "^21.0.0",
     "unplugin-vue-components": "^32.0.0",
