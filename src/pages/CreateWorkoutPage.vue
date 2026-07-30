@@ -62,23 +62,17 @@ const editingExerciseData = ref<ExerciseModalInitialData | null>(null);
 
 function setupParentMainButton() {
   if (mainButton.isMounted()) {
+    mainButton.offClick(handleSavePlan);
     mainButton.setText(
       isEditing.value ? "Сохранить изменения" : "Создать план"
     );
     mainButton.disableShineEffect();
     mainButton.enable();
     mainButton.show();
-    mainButton.offClick(handleSavePlan);
+
     mainButton.onClick(handleSavePlan);
   }
 }
-
-// Восстанавливаем кнопку родителя при закрытии модалки
-watch(showExerciseModal, (isOpen) => {
-  if (!isOpen) {
-    setupParentMainButton();
-  }
-});
 
 onMounted(async () => {
   if (isEditing.value && planId.value) {
@@ -113,6 +107,7 @@ onUnmounted(() => {
   }
 });
 
+// Восстанавливаем кнопку родителя при закрытии модалки
 watch(showExerciseModal, (isOpen) => {
   if (!isOpen) {
     setupParentMainButton();
@@ -134,6 +129,8 @@ function openAddExerciseModal() {
   triggerHaptic("light");
   editingExerciseData.value = null;
   showExerciseModal.value = true;
+
+  mainButton.offClick(handleSavePlan); // Отключаем кнопку родителя, пока модалка открыта
 }
 
 // Открытие модалки для РЕДАКТИРОВАНИЯ

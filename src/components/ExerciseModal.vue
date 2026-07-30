@@ -84,13 +84,13 @@ watch(
 
 function setupMainButton() {
   if (mainButton.isMounted()) {
+    mainButton.offClick(handleSave);
     mainButton.setText(
       props.initialData ? "Сохранить изменения" : "Добавить в план"
     );
     mainButton.enable();
     mainButton.show();
-    // На всякий случай сначала отвязываем, чтобы не было дублей
-    mainButton.offClick(handleSave);
+
     mainButton.onClick(handleSave);
   }
 }
