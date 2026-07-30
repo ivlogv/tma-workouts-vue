@@ -41,7 +41,7 @@ const displayPlans = computed(() => props.plans.slice(0, props.maxItems));
       <!-- Пунктирная кнопка "Ещё / Все программы" -->
       <button v-ripple class="more-card" type="button" @click="emit('more-click')">
         <Icon icon="lucide:plus" width="28" height="28" class="more-icon" />
-        <span class="more-text">Все программы</span>
+        <span class="more-text">{{ plans?.length ? "Все программы" : "Добавить программу" }}</span>
       </button>
     </div>
   </div>

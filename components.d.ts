@@ -16,6 +16,7 @@ declare module 'vue' {
     AppPage: typeof import('./src/components/AppPage.vue')['default']
     BottomNav: typeof import('./src/components/BottomNav.vue')['default']
     CardBlock: typeof import('./src/components/CardBlock.vue')['default']
+    ExerciseModal: typeof import('./src/components/ExerciseModal.vue')['default']
     RecentWorkouts: typeof import('./src/components/RecentWorkouts.vue')['default']
     RecentWorkoutsNew: typeof import('./src/components/RecentWorkoutsNew.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

@@ -6,6 +6,8 @@ import type {
   SessionStatus,
   ExerciseResponse,
   WorkoutPlanResponse,
+  WorkoutPlanCreate,
+  WorkoutPlanUpdate,
 } from "./types";
 
 export const workoutsApi = {
@@ -15,6 +17,7 @@ export const workoutsApi = {
     return res.data;
   },
 
+  // Получить активную сессию (если есть) или null
   getActiveSession: async (): Promise<WorkoutSessionResponse | null> => {
     const res = await api.get<WorkoutSessionResponse | null>("/workouts/active");
     return res.data;
@@ -46,6 +49,29 @@ export const plansApi = {
   getPlans: async () => {
     const res = await api.get<WorkoutPlanResponse[]>("/plans");
     return res.data;
+  },
+
+  // Получить конкретный план по ID
+  getPlanById: async (id: number) => {
+    const res = await api.get<WorkoutPlanResponse>(`/plans/${id}`);
+    return res.data;
+  },
+
+  // Создать новый план
+  createPlan: async (payload: WorkoutPlanCreate) => {
+    const res = await api.post<WorkoutPlanResponse>("/plans", payload);
+    return res.data;
+  },
+
+  // Обновить существующий план
+  updatePlan: async (id: number, payload: WorkoutPlanUpdate) => {
+    const res = await api.put<WorkoutPlanResponse>(`/plans/${id}`, payload);
+    return res.data;
+  },
+
+  // Удалить план
+  deletePlan: async (id: number) => {
+    await api.delete(`/plans/${id}`);
   },
 };
 
