@@ -48,7 +48,7 @@ jobs:
 
       - name: Build
         env:
-          VITE_API_URL: https://compete-newfoundland-combat-filme.trycloudflare.com/api/v1
+          VITE_API_URL: https://workouts-backend-tma-00f06633.fastapicloud.dev/api/v1
         run: pnpm run build
 
       - name: Setup Pages
