@@ -5,7 +5,7 @@ defineProps<{
   id: string | number;
   name: string;
   exerciseCount: number;
-  color?: string;
+  color?: string | null;
 }>();
 
 const emit = defineEmits<{

@@ -35,6 +35,7 @@ const displayPlans = computed(() => props.plans.slice(0, props.maxItems));
         :id="plan.id"
         :name="plan.name"
         :exercise-count="plan.plan_exercises?.length ?? 0"
+        :color="plan.color"
         @click="emit('plan-click', plan.id)"
       />
 
