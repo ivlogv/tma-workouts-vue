@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, onUnmounted } from "vue";
 import { showToast } from "vant";
+import { mainButton } from "@tma.js/sdk-vue";
 import { Icon } from "@iconify/vue";
 import { exercisesApi, type ExerciseCatalogItem } from "@/shared/api/exercises";
 import { triggerHaptic } from "@/shared/utils/haptic";
@@ -51,11 +52,12 @@ const isCreating = ref(false);
 
 let searchTimeout: ReturnType<typeof setTimeout>;
 
-// Синхронизация данных при открытии модалки
+// Управление MainButton при открытии/закрытии модалки
 watch(
   () => props.show,
   (isOpen) => {
     if (isOpen) {
+      // 1. Заполняем форму
       if (props.initialData) {
         modalForm.value = {
           name: props.initialData.name || "",
@@ -70,13 +72,38 @@ watch(
         selectedExerciseId.value = null;
       }
       exerciseSuggestions.value = [];
+
+      // 2. Настраиваем MainButton для модалки
+      setupMainButton();
+    } else {
+      // 3. Снимаем обработчик модалки
+      cleanupMainButton();
     }
   }
 );
 
+function setupMainButton() {
+  if (mainButton.isMounted()) {
+    mainButton.setText(
+      props.initialData ? "Сохранить изменения" : "Добавить в план"
+    );
+    mainButton.enable();
+    mainButton.show();
+    // На всякий случай сначала отвязываем, чтобы не было дублей
+    mainButton.offClick(handleSave);
+    mainButton.onClick(handleSave);
+  }
+}
+
+function cleanupMainButton() {
+  if (mainButton.isMounted()) {
+    mainButton.offClick(handleSave);
+  }
+}
+
 // Логика поиска с дебаунсом 300мс
 function onNameInput(val: string) {
-  selectedExerciseId.value = null; // Сбрасываем при ручном изменении текста
+  selectedExerciseId.value = null;
   clearTimeout(searchTimeout);
 
   if (!val.trim()) {
@@ -118,11 +145,13 @@ async function handleSave() {
 
   let finalExerciseId = selectedExerciseId.value;
 
-  // Если юзер ввел название и НЕ выбрал готовый вариант из автокомплита
   if (!finalExerciseId) {
     try {
       isCreating.value = true;
-      // 1. Проверяем точное совпадение в локальном поиске
+      if (mainButton.isMounted()) {
+        mainButton.showLoader(); // Показываем лоадер прямо на кнопке Telegram
+      }
+
       const found = await exercisesApi.search(nameTrimmed);
       const exactMatch = found.find(
         (ex) => ex.name.toLowerCase() === nameTrimmed.toLowerCase()
@@ -131,7 +160,6 @@ async function handleSave() {
       if (exactMatch) {
         finalExerciseId = exactMatch.id;
       } else {
-        // 2. Создаем новое кастомное упражнение в справочнике (ExerciseCreate -> ExerciseResponse)
         const created = await exercisesApi.create({ name: nameTrimmed });
         finalExerciseId = created.id;
       }
@@ -142,6 +170,9 @@ async function handleSave() {
       return;
     } finally {
       isCreating.value = false;
+      if (mainButton.isMounted()) {
+        mainButton.hideLoader();
+      }
     }
   }
 
@@ -159,6 +190,10 @@ async function handleSave() {
 
   closeModal();
 }
+
+onUnmounted(() => {
+  cleanupMainButton();
+});
 </script>
 
 <template>
@@ -263,19 +298,6 @@ async function handleSave() {
             />
           </van-cell-group>
         </div>
-
-        <button
-          v-ripple
-          type="button"
-          class="submit-modal-btn"
-          :disabled="isCreating"
-          @click="handleSave"
-        >
-          <span v-if="!isCreating">
-            {{ initialData ? "Сохранить изменения" : "Добавить в план" }}
-          </span>
-          <span v-else>Сохранение...</span>
-        </button>
       </div>
     </div>
   </van-popup>
@@ -407,23 +429,5 @@ async function handleSave() {
   background: rgba(255, 255, 255, 0.06);
   padding: 2px 6px;
   border-radius: 4px;
-}
-
-.submit-modal-btn {
-  margin-top: 8px;
-  width: 100%;
-  height: 46px;
-  border-radius: 12px;
-  border: none;
-  background: var(--tg-theme-button-color, #3390ec);
-  color: var(--tg-theme-button-text-color, #ffffff);
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.submit-modal-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
 }
 </style>

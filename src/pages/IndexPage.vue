@@ -279,7 +279,7 @@ onUnmounted(() => {
       @more-click="handleMorePlans"
     />
 
-    <van-button
+    <!-- <van-button
       type="primary"
       block
       :loading="isAuthLoading"
@@ -287,7 +287,7 @@ onUnmounted(() => {
       @click="handleStart"
     >
       {{ selectedId ? "Перейти к тренировке" : "Выбрать тренировку" }}
-    </van-button>
+    </van-button> -->
 
     <template #bottom>
       <BottomNav />

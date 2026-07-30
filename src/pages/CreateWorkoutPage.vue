@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from "vue";
+import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { showToast } from "vant";
 import { mainButton } from "@tma.js/sdk-vue";
@@ -58,6 +58,28 @@ const exercises = ref<WorkoutPlanExerciseItem[]>([]);
 const showExerciseModal = ref(false);
 const editingExerciseData = ref<ExerciseModalInitialData | null>(null);
 
+  // В CreateWorkoutPlanPage.vue
+
+function setupParentMainButton() {
+  if (mainButton.isMounted()) {
+    mainButton.setText(
+      isEditing.value ? "Сохранить изменения" : "Создать план"
+    );
+    mainButton.disableShineEffect();
+    mainButton.enable();
+    mainButton.show();
+    mainButton.offClick(handleSavePlan);
+    mainButton.onClick(handleSavePlan);
+  }
+}
+
+// Восстанавливаем кнопку родителя при закрытии модалки
+watch(showExerciseModal, (isOpen) => {
+  if (!isOpen) {
+    setupParentMainButton();
+  }
+});
+
 onMounted(async () => {
   if (isEditing.value && planId.value) {
     const plan = await plansStore.getPlanById(planId.value);
@@ -81,13 +103,19 @@ onMounted(async () => {
     }
   }
 
+  setupParentMainButton();
+});
+
+onUnmounted(() => {
   if (mainButton.isMounted()) {
-    mainButton.setText(
-      isEditing.value ? "Сохранить изменения" : "Создать план"
-    );
-    mainButton.enable();
-    mainButton.show();
-    mainButton.onClick(handleSavePlan);
+    mainButton.offClick(handleSavePlan);
+    mainButton.hide();
+  }
+});
+
+watch(showExerciseModal, (isOpen) => {
+  if (!isOpen) {
+    setupParentMainButton();
   }
 });
 
@@ -214,12 +242,7 @@ async function handleSavePlan() {
   }
 }
 
-onUnmounted(() => {
-  if (mainButton.isMounted()) {
-    mainButton.offClick(handleSavePlan);
-    mainButton.hide();
-  }
-});
+
 </script>
 
 <template>
