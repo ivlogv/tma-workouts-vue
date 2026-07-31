@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, onUnmounted } from "vue";
 import { showToast } from "vant";
-import { mainButton } from "@tma.js/sdk-vue";
+import { mainButton, miniApp } from "@tma.js/sdk-vue";
 import { Icon } from "@iconify/vue";
 import { exercisesApi, type ExerciseCatalogItem } from "@/shared/api/exercises";
 import { triggerHaptic } from "@/shared/utils/haptic";
@@ -84,6 +84,7 @@ watch(
 
 function setupMainButton() {
   if (mainButton.isMounted()) {
+    miniApp.setBottomBarColor("bg_color");
     mainButton.offClick(handleSave);
     mainButton.setText(
       props.initialData ? "Сохранить изменения" : "Добавить в план"
@@ -97,6 +98,7 @@ function setupMainButton() {
 
 function cleanupMainButton() {
   if (mainButton.isMounted()) {
+    miniApp.setBottomBarColor("secondary_bg_color");
     mainButton.offClick(handleSave);
   }
 }
