@@ -101,7 +101,7 @@ onUnmounted(() => {
     />
 
     <!-- Загрузка -->
-    <div v-if="isLoading" class="empty-state">
+    <div v-if="isLoading && plans.length === 0" class="empty-state">
       <div class="empty-icon-wrap">Загрузка...</div>
     </div>
 
@@ -168,12 +168,12 @@ onUnmounted(() => {
       </van-cell-group>
     </div>
 
-    <van-button
+    <!-- <van-button
       type="primary"
       @click="handleCreateNewPlan"
     >
       Создать новый план
-    </van-button>
+    </van-button> -->
 
     <template #bottom>
       <BottomNav />

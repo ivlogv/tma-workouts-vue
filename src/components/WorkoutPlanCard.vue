@@ -5,6 +5,7 @@ defineProps<{
   id: string | number;
   name: string;
   exerciseCount: number;
+  subtitle?: string | null;
   color?: string | null;
 }>();
 
@@ -22,8 +23,7 @@ const emit = defineEmits<{
     ></div>
 
     <div class="plan-card__content">
-      <!-- Иконка теперь берет цвет программы и подсвечивается легким фоном -->
-      <div
+      <!-- <div
         class="plan-card__icon-wrapper"
         :style="{
           color: color || 'var(--tg-theme-button-color, #3390ec)',
@@ -32,11 +32,11 @@ const emit = defineEmits<{
             : 'color-mix(in srgb, var(--tg-theme-button-color, #3390ec) 15%, transparent)'
         }"
       >
-        <!-- Поправили опечатку: dumbbell с двумя 'b' -->
         <Icon icon="lucide:dumbbell" width="18" height="18" />
-      </div>
+      </div> -->
 
       <div class="plan-card__name">{{ name }}</div>
+      <div v-if="subtitle" class="plan-card__count">{{ subtitle }}</div>
       <div class="plan-card__count">{{ exerciseCount }} упражнений</div>
     </div>
   </div>

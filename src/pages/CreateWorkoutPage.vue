@@ -174,6 +174,7 @@ function openEditExerciseModal(exercise: WorkoutPlanExerciseItem) {
     note: exercise.note,
   };
   showExerciseModal.value = true;
+  miniApp.setBottomBarColor("bg_color");
 }
 
 // Прием сохраненных данных из модалки
