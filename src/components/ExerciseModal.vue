@@ -83,7 +83,7 @@ watch(
 );
 
 function setupMainButton() {
-  miniApp.setBottomBarColor("bg_color");
+  // miniApp.setBottomBarColor("bg_color");
 
   if (mainButton.isMounted()) {
 
