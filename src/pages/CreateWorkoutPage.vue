@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { showToast } from "vant";
-import { mainButton } from "@tma.js/sdk-vue";
+import { mainButton, miniApp } from "@tma.js/sdk-vue";
 import { Icon } from "@iconify/vue";
 import draggable from "vuedraggable";
 
@@ -68,6 +68,7 @@ const mainButtonText = computed(() => {
 });
 
 function setupParentMainButton() {
+  miniApp.setBottomBarColor("secondary_bg_color");
   if (!mainButton.isMounted()) return;
 
   // 1. Всегда сначала отвязываем ВСЕ возможные хендлеры страницы

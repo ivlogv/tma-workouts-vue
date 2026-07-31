@@ -83,8 +83,10 @@ watch(
 );
 
 function setupMainButton() {
+  miniApp.setBottomBarColor("bg_color");
+
   if (mainButton.isMounted()) {
-    miniApp.setBottomBarColor("bg_color");
+
     mainButton.offClick(handleSave);
     mainButton.setText(
       props.initialData ? "Сохранить изменения" : "Добавить в план"
@@ -98,7 +100,6 @@ function setupMainButton() {
 
 function cleanupMainButton() {
   if (mainButton.isMounted()) {
-    miniApp.setBottomBarColor("secondary_bg_color");
     mainButton.offClick(handleSave);
   }
 }
