@@ -19,8 +19,8 @@ import type { WorkoutPlanCreate } from "@/shared/api/types";
 // Локальный тип элемента в списке тренировочного плана
 interface WorkoutPlanExerciseItem {
   client_id: string; // Локальный ID элемента для Vue (vuedraggable, key)
-  exercise_id: number; // ID из справочника (соответствует PlanExerciseBase.exercise_id)
-  name: string; // Название для UI (из справочника)
+  exercise_id: number; // ID из справочника
+  name: string; // Название для UI
   sets: string;
   reps: string;
   weight?: string;
@@ -58,47 +58,45 @@ const exercises = ref<WorkoutPlanExerciseItem[]>([]);
 const showExerciseModal = ref(false);
 const editingExerciseData = ref<ExerciseModalInitialData | null>(null);
 
-  // В CreateWorkoutPlanPage.vue
-
-const mainButtonText = computed(() => {
-  if (showExerciseModal.value) {
-    return editingExerciseData.value ? "Сохранить упражнение" : "Добавить в план";
-  }
-  return isEditing.value ? "Сохранить изменения" : "Создать план";
-});
+const parentMainButtonText = computed(() =>
+  isEditing.value ? "Сохранить изменения" : "Создать план"
+);
 
 function setupParentMainButton() {
   if (!mainButton.isMounted()) return;
 
-  // 1. Всегда сначала отвязываем ВСЕ возможные хендлеры страницы
+  // 1. Сбрасываем старый слушатель
   mainButton.offClick(handleSavePlan);
 
-  // 2. Настраиваем внешка
-  mainButton.setText(mainButtonText.value);
+  // 2. Возвращаем цвет панели под фоновый цвет страницы
+  miniApp.setBottomBarColor("secondary_bg_color");
+
+  // 3. Конфигурируем кнопку родителя
+  mainButton.setText(parentMainButtonText.value);
   mainButton.disableShineEffect();
   mainButton.enable();
   mainButton.show();
-  miniApp.setBottomBarColor("secondary_bg_color");
 
-  // 3. Привязываем хендлер
+  // 4. Навешиваем хендлер сохранения
   mainButton.onClick(handleSavePlan);
 }
 
-// Следим за открытием/закрытием модалки
+// Следим за состоянием модалки
 watch(showExerciseModal, (isOpen) => {
-  if (!isOpen) {
-    // Когда модалка КЛОЗИТСЯ — возвращаем управление родителю
-    setupParentMainButton();
-  } else {
-    // Когда модалка ОТКРЫВАЕТСЯ — гарантированно снимаем хендлер родителя
+  if (isOpen) {
+    // В модалке цвет снизу сливается с попапом (bg_color)
+    miniApp.setBottomBarColor("bg_color");
     if (mainButton.isMounted()) {
       mainButton.offClick(handleSavePlan);
     }
+  } else {
+    // Когда модалка закрывается — возвращаем управление родительской странице
+    setupParentMainButton();
   }
 });
 
-// Следим за изменением текста (например, если сменился isEditing)
-watch(mainButtonText, (newText) => {
+// Синхронизация текста при изменении режимов (создание / редактирование)
+watch(parentMainButtonText, (newText) => {
   if (mainButton.isMounted() && !showExerciseModal.value) {
     mainButton.setText(newText);
   }
@@ -126,23 +124,17 @@ onMounted(async () => {
     }
   }
 
-  // Первичная инициализация
+  // Первичная инициализация кнопки страницы
   setupParentMainButton();
 });
 
 onUnmounted(() => {
   if (mainButton.isMounted()) {
     mainButton.offClick(handleSavePlan);
+    mainButton.hideLoader();
     mainButton.hide();
   }
 });
-
-// Восстанавливаем кнопку родителя при закрытии модалки
-// watch(showExerciseModal, (isOpen) => {
-//   if (!isOpen) {
-//     setupParentMainButton();
-//   }
-// });
 
 function handleGoBack() {
   triggerHaptic("light");
@@ -174,13 +166,11 @@ function openEditExerciseModal(exercise: WorkoutPlanExerciseItem) {
     note: exercise.note,
   };
   showExerciseModal.value = true;
-  miniApp.setBottomBarColor("bg_color");
 }
 
 // Прием сохраненных данных из модалки
 function handleSaveExerciseFromModal(data: ExerciseModalOutput) {
   if (data.client_id) {
-    // Обновляем существующий элемент в списке
     const index = exercises.value.findIndex(
       (e) => e.client_id === data.client_id
     );
@@ -196,7 +186,6 @@ function handleSaveExerciseFromModal(data: ExerciseModalOutput) {
       };
     }
   } else {
-    // Добавляем новый элемент в список
     exercises.value.push({
       client_id: `${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
       exercise_id: data.exercise_id,
@@ -235,7 +224,6 @@ async function handleSavePlan() {
     return;
   }
 
-  // Явное приведение типов под WorkoutPlanCreate
   const payload: WorkoutPlanCreate = {
     name: name.value.trim(),
     description: description.value.trim() || null,
@@ -253,6 +241,11 @@ async function handleSavePlan() {
   try {
     triggerHaptic("medium");
 
+    if (mainButton.isMounted()) {
+      mainButton.showLoader();
+      mainButton.disable(); // Предотвращаем повторные нажатия
+    }
+
     if (isEditing.value && planId.value) {
       await plansStore.updatePlan(planId.value, payload);
       showToast({ message: "План обновлен", type: "success" });
@@ -265,10 +258,13 @@ async function handleSavePlan() {
   } catch (error: any) {
     const msg = error?.response?.data?.detail || "Ошибка при сохранении плана";
     showToast({ message: msg, position: "top" });
+  } finally {
+    if (mainButton.isMounted()) {
+      mainButton.hideLoader();
+      mainButton.enable();
+    }
   }
 }
-
-
 </script>
 
 <template>
