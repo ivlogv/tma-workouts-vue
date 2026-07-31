@@ -133,6 +133,8 @@ function selectSuggestion(item: ExerciseCatalogItem) {
 }
 
 function closeModal() {
+  triggerHaptic("light");
+  cleanupMainButton();
   emit("update:show", false);
 }
 
@@ -205,6 +207,7 @@ onUnmounted(() => {
     round
     class="exercise-popup"
     @update:show="closeModal"
+    @click-overlay="closeModal"
   >
     <div class="popup-content">
       <div class="popup-header">
