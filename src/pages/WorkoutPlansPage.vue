@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import { mainButton } from "@tma.js/sdk-vue";
 import { Icon } from "@iconify/vue";
@@ -8,6 +8,8 @@ import AppPage from "@/components/AppPage.vue";
 import ScreenHeader from "@/components/ScreenHeader.vue";
 import BottomNav from "@/components/BottomNav.vue";
 import { triggerHaptic } from "@/shared/utils/haptic";
+import { usePlansStore } from "@/stores/plans";
+import type { WorkoutPlanResponse } from "@/shared/api/types";
 
 interface WorkoutPlan {
   id: string;
@@ -18,41 +20,49 @@ interface WorkoutPlan {
 }
 
 const router = useRouter();
+const plansStore = usePlansStore();
+
+const plans = computed(() => plansStore.plans);
+const isLoading = computed(() => plansStore.isLoading);
+const error = computed(() => plansStore.error);
+
+function exercisesCount(plan: WorkoutPlanResponse): number {
+  return plan.plan_exercises?.length ?? 0;
+}
 
 // Моковые данные планов (в будущем заменятся на useWorkoutStore)
-const plans = ref<WorkoutPlan[]>([
-  {
-    id: "1",
-    name: "Силовая А (Грудь + Трицепс)",
-    description: "Базовый сплит на верх тела",
-    exercisesCount: 5,
-    color: "#ff9500",
-  },
-  {
-    id: "2",
-    name: "День Спины & Бицепс",
-    description: "Тяговые движения и подтягивания",
-    exercisesCount: 6,
-    color: "#3390ec",
-  },
-  {
-    id: "3",
-    name: "Ноги & Пресс",
-    description: "Приседания, выпады и проработка кора",
-    exercisesCount: 4,
-    color: "#34c759",
-  },
-]);
+// const plans = ref<WorkoutPlan[]>([
+//   {
+//     id: "1",
+//     name: "Силовая А (Грудь + Трицепс)",
+//     description: "Базовый сплит на верх тела",
+//     exercisesCount: 5,
+//     color: "#ff9500",
+//   },
+//   {
+//     id: "2",
+//     name: "День Спины & Бицепс",
+//     description: "Тяговые движения и подтягивания",
+//     exercisesCount: 6,
+//     color: "#3390ec",
+//   },
+//   {
+//     id: "3",
+//     name: "Ноги & Пресс",
+//     description: "Приседания, выпады и проработка кора",
+//     exercisesCount: 4,
+//     color: "#34c759",
+//   },
+// ]);
 
 function handleGoBack() {
   triggerHaptic("light");
   router.back();
 }
 
-function handleOpenPlan(planId: string) {
+function handleOpenPlan(plan: WorkoutPlanResponse) {
   triggerHaptic("light");
-  // Переход на страницу деталей/управления планом
-  router.push(`/plans/${planId}`);
+  router.push(`/plans/${plan.id}`);
 }
 
 function handleCreateNewPlan() {
@@ -61,7 +71,9 @@ function handleCreateNewPlan() {
 }
 
 // --- Telegram MainButton ---
-onMounted(() => {
+onMounted(async () => {
+  await plansStore.fetchPlans();
+
   if (mainButton.isMounted()) {
     mainButton.setText("Создать новый план");
     mainButton.enable();
@@ -88,6 +100,19 @@ onUnmounted(() => {
       @back="handleGoBack"
     />
 
+    <!-- Загрузка -->
+    <div v-if="isLoading" class="empty-state">
+      <div class="empty-icon-wrap">Загрузка...</div>
+    </div>
+
+    <!-- Ошибка -->
+    <div v-else-if="error" class="empty-state">
+      <div class="empty-icon-wrap">{{ error }}</div>
+      <button v-ripple class="btn-primary" @click="plansStore.fetchPlans">
+        Попробовать снова
+      </button>
+    </div>
+
     <!-- Пустое состояние -->
     <div v-if="plans.length === 0" class="empty-state">
       <div class="empty-icon-wrap">
@@ -113,7 +138,7 @@ onUnmounted(() => {
           is-link
           center
           class="plan-cell"
-          @click="handleOpenPlan(plan.id)"
+          @click="handleOpenPlan(plan)"
         >
           <!-- Иконка гантели слева на цветной подложке -->
           <template #icon>
@@ -135,8 +160,8 @@ onUnmounted(() => {
               {{ plan.description }}
             </div>
             <div class="plan-meta">
-              {{ plan.exercisesCount }}
-              {{ plan.exercisesCount === 1 ? "упражнение" : "упражнений" }}
+              {{ exercisesCount(plan) }}
+              {{ exercisesCount(plan) === 1 ? "упражнение" : "упражнений" }}
             </div>
           </template>
         </van-cell>

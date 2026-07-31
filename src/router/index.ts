@@ -77,6 +77,15 @@ export const routes = [
       icon: "",
     },
   },
+  {
+    path: "/plans/:id",
+    name: "plan-detail",
+    component: CreateWorkoutPage,
+    meta: {
+      title: "Plan Detail",
+      icon: "",
+    },
+  },
   // {
   //   path: "/theme-params",
   //   name: "theme-params",

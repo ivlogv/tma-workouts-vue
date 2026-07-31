@@ -68,7 +68,6 @@ const mainButtonText = computed(() => {
 });
 
 function setupParentMainButton() {
-  miniApp.setBottomBarColor("secondary_bg_color");
   if (!mainButton.isMounted()) return;
 
   // 1. Всегда сначала отвязываем ВСЕ возможные хендлеры страницы
@@ -79,6 +78,7 @@ function setupParentMainButton() {
   mainButton.disableShineEffect();
   mainButton.enable();
   mainButton.show();
+  miniApp.setBottomBarColor("secondary_bg_color");
 
   // 3. Привязываем хендлер
   mainButton.onClick(handleSavePlan);
