@@ -60,19 +60,48 @@ const editingExerciseData = ref<ExerciseModalInitialData | null>(null);
 
   // В CreateWorkoutPlanPage.vue
 
-function setupParentMainButton() {
-  if (mainButton.isMounted()) {
-    mainButton.offClick(handleSavePlan);
-    mainButton.setText(
-      isEditing.value ? "Сохранить изменения" : "Создать план"
-    );
-    mainButton.disableShineEffect();
-    mainButton.enable();
-    mainButton.show();
-
-    mainButton.onClick(handleSavePlan);
+const mainButtonText = computed(() => {
+  if (showExerciseModal.value) {
+    return editingExerciseData.value ? "Сохранить упражнение" : "Добавить в план";
   }
+  return isEditing.value ? "Сохранить изменения" : "Создать план";
+});
+
+function setupParentMainButton() {
+  if (!mainButton.isMounted()) return;
+
+  // 1. Всегда сначала отвязываем ВСЕ возможные хендлеры страницы
+  mainButton.offClick(handleSavePlan);
+
+  // 2. Настраиваем внешка
+  mainButton.setText(mainButtonText.value);
+  mainButton.disableShineEffect();
+  mainButton.enable();
+  mainButton.show();
+
+  // 3. Привязываем хендлер
+  mainButton.onClick(handleSavePlan);
 }
+
+// Следим за открытием/закрытием модалки
+watch(showExerciseModal, (isOpen) => {
+  if (!isOpen) {
+    // Когда модалка КЛОЗИТСЯ — возвращаем управление родителю
+    setupParentMainButton();
+  } else {
+    // Когда модалка ОТКРЫВАЕТСЯ — гарантированно снимаем хендлер родителя
+    if (mainButton.isMounted()) {
+      mainButton.offClick(handleSavePlan);
+    }
+  }
+});
+
+// Следим за изменением текста (например, если сменился isEditing)
+watch(mainButtonText, (newText) => {
+  if (mainButton.isMounted() && !showExerciseModal.value) {
+    mainButton.setText(newText);
+  }
+});
 
 onMounted(async () => {
   if (isEditing.value && planId.value) {
@@ -83,7 +112,6 @@ onMounted(async () => {
       selectedColor.value = plan.color || COLORS[0];
 
       if (plan.plan_exercises?.length) {
-        // Подтягиваем данные согласно PlanExerciseResponse
         exercises.value = plan.plan_exercises.map((ex, idx) => ({
           client_id: ex.id ? String(ex.id) : `${Date.now()}-${idx}`,
           exercise_id: ex.exercise_id,
@@ -97,6 +125,7 @@ onMounted(async () => {
     }
   }
 
+  // Первичная инициализация
   setupParentMainButton();
 });
 
@@ -108,11 +137,11 @@ onUnmounted(() => {
 });
 
 // Восстанавливаем кнопку родителя при закрытии модалки
-watch(showExerciseModal, (isOpen) => {
-  if (!isOpen) {
-    setupParentMainButton();
-  }
-});
+// watch(showExerciseModal, (isOpen) => {
+//   if (!isOpen) {
+//     setupParentMainButton();
+//   }
+// });
 
 function handleGoBack() {
   triggerHaptic("light");
@@ -129,8 +158,6 @@ function openAddExerciseModal() {
   triggerHaptic("light");
   editingExerciseData.value = null;
   showExerciseModal.value = true;
-
-  mainButton.offClick(handleSavePlan); // Отключаем кнопку родителя, пока модалка открыта
 }
 
 // Открытие модалки для РЕДАКТИРОВАНИЯ

@@ -9,8 +9,7 @@ import AppPage from "@/components/AppPage.vue";
 import ScreenHeader from "@/components/ScreenHeader.vue";
 import BottomNav from "@/components/BottomNav.vue";
 import StatBlock from "@/components/StatBlock.vue";
-// import RecentWorkouts from "@/components/RecentWorkouts.vue";
-import RecentWorkoutsNew from "@/components/RecentWorkoutsNew.vue";
+import RecentWorkouts from "@/components/RecentWorkouts.vue";
 import ActiveWorkoutCard from "@/components/ActiveWorkoutCard.vue";
 import WorkoutPlanGallery from "@/components/WorkoutPlanGallery.vue";
 import { triggerHaptic } from "@/shared/utils/haptic";
@@ -97,54 +96,14 @@ onMounted(async () => {
 
   // 2. Настраиваем MainButton
   if (mainButton.isMounted()) {
+    mainButton.offClick(handleStart);
     mainButton.setText(buttonText.value);
-    mainButton.setParams({
-      hasShineEffect: true,
-    });
+    mainButton.enableShineEffect();
     mainButton.enable();
     mainButton.show();
     mainButton.onClick(handleStart);
   }
 });
-
-// Моковые данные для последних тренировок
-const workouts = [
-  {
-    id: 1,
-    name: "Full Body Beginner",
-    date: "22.03.2026",
-    icon: "mdi:dumbbell",
-  },
-  {
-    id: 2,
-    name: "Core Strength",
-    date: "20.03.2026",
-    icon: "mdi:dumbbell",
-  },
-  {
-    id: 3,
-    name: "Full Body Beginner",
-    date: "16.03.2026",
-    icon: "mdi:dumbbell",
-  },
-  {
-    id: 4,
-    name: "Full Body Beginner",
-    date: "16.03.2026",
-    icon: "mdi:dumbbell",
-  },
-];
-
-const myPlans = ref([
-  {
-    id: "1",
-    name: "Силовая А (Грудь + Трицепс)",
-    exercises: [1, 2, 3, 4],
-    color: "#ff9500",
-  },
-  { id: "2", name: "День Спины", exercises: [1, 2, 3, 4, 5], color: "#3390ec" },
-  { id: "3", name: "Nogi & Pres", exercises: [1, 2, 3], color: "#34c759" },
-]);
 
 const buttonText = computed(() => {
   return selectedId.value ? "Перейти к тренировке" : "Выбрать тренировку";
@@ -195,24 +154,6 @@ function handleMorePlans() {
   router.push("/plans");
 }
 
-// --- Интеграция с Telegram MainButton ---
-
-// Настройка и отображение MainButton при монтировании
-onMounted(() => {
-  if (mainButton.isMounted()) {
-    // Устанавливаем стартовый текст и вешаем клик
-    mainButton.setText(buttonText.value);
-    mainButton.setParams({
-      hasShineEffect: true,
-    });
-    mainButton.enable();
-    mainButton.show();
-
-    // Слушаем клик по нижней синей/зеленой кнопке Telegram
-    mainButton.onClick(handleStart);
-  }
-});
-
 // Обновляем текст кнопки при смене выбранной тренировки
 watch(
   buttonText,
@@ -224,60 +165,29 @@ watch(
   { flush: "post" },
 );
 
-// ОБЯЗАТЕЛЬНО: Прячем или отписываемся при уходе с экрана
 onUnmounted(() => {
   if (mainButton.isMounted()) {
     mainButton.offClick(handleStart);
-    mainButton.hide(); // Прячем кнопку, если на следующем экране нужна другая логика
+    mainButton.hide();
   }
 });
 </script>
 
 <template>
   <AppPage title="" :back="false">
-    <ScreenHeader
-      :title="headerTitle"
-      subtitle="Готов к сегодняшней тренировке?"
-      :letter="userLetter"
-      @avatar-click="handleAvatarClick"
-    />
+    <ScreenHeader :title="headerTitle" subtitle="Готов к сегодняшней тренировке?" :letter="userLetter"
+      @avatar-click="handleAvatarClick" />
 
-    <ActiveWorkoutCard
-      v-if="workoutStore.isSessionActive && workoutStore.activeSession"
-      :workout="workoutStore.activeSession"
-      @click="handleContinueActive"
-    />
+    <ActiveWorkoutCard v-if="workoutStore.isSessionActive && workoutStore.activeSession"
+      :workout="workoutStore.activeSession" @click="handleContinueActive" />
 
-    <!-- <StatsBlock :days-in-row="daysInRow" :this-week="thisWeek" />
+    <StatBlock :days-in-row="daysInRow" :this-week="thisWeek" :total-workouts="totalWorkouts"
+      :avg-duration="avgDuration" />
 
-    <StatsBlock :days-in-row="daysInRow" :this-week="thisWeek" /> -->
+    <RecentWorkouts :workouts="historyStore.sessions" :selected-id="selectedId" :is-loading="isAuthLoading"
+      @select="toggleSelect" @open-history="router.push('/history')" />
 
-    <StatBlock
-      :days-in-row="daysInRow"
-      :this-week="thisWeek"
-      :total-workouts="totalWorkouts"
-      :avg-duration="avgDuration"
-    />
-
-    <!-- <RecentWorkouts
-      :workouts="workouts"
-      :selected-id="selectedId"
-      @select="toggleSelect"
-    /> -->
-
-    <RecentWorkoutsNew
-      :workouts="historyStore.sessions"
-      :selected-id="selectedId"
-      :is-loading="isAuthLoading"
-      @select="toggleSelect"
-      @open-history="router.push('/history')"
-    />
-
-    <WorkoutPlanGallery
-      :plans="plansStore.plans"
-      @plan-click="handlePlanClick"
-      @more-click="handleMorePlans"
-    />
+    <WorkoutPlanGallery :plans="plansStore.plans" @plan-click="handlePlanClick" @more-click="handleMorePlans" />
 
     <!-- <van-button
       type="primary"
