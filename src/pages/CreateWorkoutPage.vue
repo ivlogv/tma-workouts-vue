@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { showToast } from "vant";
-import { mainButton, secondaryButton, miniApp } from "@tma.js/sdk-vue";
+import { mainButton, secondaryButton, miniApp, themeParams } from "@tma.js/sdk-vue";
 import { Icon } from "@iconify/vue";
 import draggable from "vuedraggable";
 
@@ -75,12 +75,13 @@ function setupButtons() {
   secondaryButton.offClick(handleSecondaryButtonClick);
 
   miniApp.setBottomBarColor("secondary_bg_color");
+  const appBgColor = themeParams.bgColor() || "#1c1c1e";
 
   if (!isEditMode.value) {
     // --------------------------------------------------
     // РЕЖИМ ПРОСМОТРА
     // --------------------------------------------------
-    mainButton.setText("Начать тренировку");
+    mainButton.setText("Начать");
     mainButton.enableShineEffect();
     mainButton.enable();
     mainButton.show();
@@ -89,14 +90,14 @@ function setupButtons() {
     secondaryButton.setParams({
       position: "left", // Размещаем над mainButton
     });
-    secondaryButton.setBgColor("#000000");
+    secondaryButton.setBgColor(appBgColor as `#${string}`);
     secondaryButton.enable();
     secondaryButton.show();
   } else {
     // --------------------------------------------------
     // РЕЖИМ РЕДАКТИРОВАНИЯ / СОЗДАНИЯ
     // --------------------------------------------------
-    mainButton.setText(isExistingPlan.value ? "Сохранить изменения" : "Создать план");
+    mainButton.setText(isExistingPlan.value ? "Сохранить" : "Создать");
     mainButton.disableShineEffect();
     mainButton.enable();
     mainButton.show();
@@ -104,7 +105,8 @@ function setupButtons() {
     if (isExistingPlan.value) {
       // Для существующего плана даем возможность отменить редактирование
       secondaryButton.setText("Отмена");
-      secondaryButton.setParams({ position: "top" });
+      secondaryButton.setParams({ position: "left" });
+      secondaryButton.setBgColor(appBgColor as `#${string}`);
       secondaryButton.enable();
       secondaryButton.show();
     } else {
