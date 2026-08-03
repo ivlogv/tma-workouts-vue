@@ -87,8 +87,9 @@ function setupButtons() {
 
     secondaryButton.setText("Редактировать");
     secondaryButton.setParams({
-      position: "top", // Размещаем над mainButton
+      position: "left", // Размещаем над mainButton
     });
+    secondaryButton.setBgColor("#000000");
     secondaryButton.enable();
     secondaryButton.show();
   } else {
