@@ -11,6 +11,7 @@ import {
   miniApp,
   backButton,
   mainButton,
+  secondaryButton,
   // postEvent,
 } from "@tma.js/sdk-vue";
 
@@ -124,5 +125,10 @@ export async function init(options: {
   if (mainButton.mount.ifAvailable()) {
     mainButton.mount();
     console.log("Main button mounted");
+  }
+
+  if (secondaryButton.mount.ifAvailable()) {
+    secondaryButton.mount();
+    console.log("Secondary button mounted");
   }
 }

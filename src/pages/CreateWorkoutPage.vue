@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { showToast } from "vant";
-import { mainButton, miniApp } from "@tma.js/sdk-vue";
+import { mainButton, secondaryButton, miniApp } from "@tma.js/sdk-vue";
 import { Icon } from "@iconify/vue";
 import draggable from "vuedraggable";
 
@@ -14,13 +14,14 @@ import ExerciseModal, {
 } from "@/components/ExerciseModal.vue";
 import { triggerHaptic } from "@/shared/utils/haptic";
 import { usePlansStore } from "@/stores/plans";
+import { useWorkoutStore } from "@/stores/workouts";
 import type { WorkoutPlanCreate } from "@/shared/api/types";
 
 // Локальный тип элемента в списке тренировочного плана
 interface WorkoutPlanExerciseItem {
-  client_id: string; // Локальный ID элемента для Vue (vuedraggable, key)
-  exercise_id: number; // ID из справочника
-  name: string; // Название для UI
+  client_id: string;
+  exercise_id: number;
+  name: string;
   sets: string;
   reps: string;
   weight?: string;
@@ -30,12 +31,18 @@ interface WorkoutPlanExerciseItem {
 const router = useRouter();
 const route = useRoute();
 const plansStore = usePlansStore();
+const workoutStore = useWorkoutStore();
 
 const planId = computed(() => {
   const id = route.params.id;
   return id ? Number(id) : null;
 });
-const isEditing = computed(() => planId.value !== null && !isNaN(planId.value));
+
+// Существует ли план в базе
+const isExistingPlan = computed(() => planId.value !== null && !isNaN(planId.value));
+
+// Состояние режима: true = редактирование/создание, false = просмотр
+const isEditMode = ref(!isExistingPlan.value);
 
 const COLORS = [
   "#3390ec",
@@ -58,52 +65,111 @@ const exercises = ref<WorkoutPlanExerciseItem[]>([]);
 const showExerciseModal = ref(false);
 const editingExerciseData = ref<ExerciseModalInitialData | null>(null);
 
-const parentMainButtonText = computed(() =>
-  isEditing.value ? "Сохранить изменения" : "Создать план"
-);
+// --- Настройка MainButton & SecondaryButton ---
 
-function setupParentMainButton() {
-  if (!mainButton.isMounted()) return;
+function setupButtons() {
+  if (!mainButton.isMounted() || !secondaryButton.isMounted()) return;
 
-  // 1. Сбрасываем старый слушатель
-  mainButton.offClick(handleSavePlan);
+  // Очищаем старые обработчики
+  mainButton.offClick(handleMainButtonClick);
+  secondaryButton.offClick(handleSecondaryButtonClick);
 
-  // 2. Возвращаем цвет панели под фоновый цвет страницы
   miniApp.setBottomBarColor("secondary_bg_color");
 
-  // 3. Конфигурируем кнопку родителя
-  mainButton.setText(parentMainButtonText.value);
-  mainButton.disableShineEffect();
-  mainButton.enable();
-  mainButton.show();
+  if (!isEditMode.value) {
+    // --------------------------------------------------
+    // РЕЖИМ ПРОСМОТРА
+    // --------------------------------------------------
+    mainButton.setText("Начать тренировку");
+    mainButton.enableShineEffect();
+    mainButton.enable();
+    mainButton.show();
 
-  // 4. Навешиваем хендлер сохранения
-  mainButton.onClick(handleSavePlan);
+    secondaryButton.setText("Редактировать");
+    secondaryButton.setParams({
+      position: "top", // Размещаем над mainButton
+    });
+    secondaryButton.enable();
+    secondaryButton.show();
+  } else {
+    // --------------------------------------------------
+    // РЕЖИМ РЕДАКТИРОВАНИЯ / СОЗДАНИЯ
+    // --------------------------------------------------
+    mainButton.setText(isExistingPlan.value ? "Сохранить изменения" : "Создать план");
+    mainButton.disableShineEffect();
+    mainButton.enable();
+    mainButton.show();
+
+    if (isExistingPlan.value) {
+      // Для существующего плана даем возможность отменить редактирование
+      secondaryButton.setText("Отмена");
+      secondaryButton.setParams({ position: "top" });
+      secondaryButton.enable();
+      secondaryButton.show();
+    } else {
+      // При создании нового плана secondaryButton не нужен
+      secondaryButton.hide();
+    }
+  }
+
+  mainButton.onClick(handleMainButtonClick);
+  secondaryButton.onClick(handleSecondaryButtonClick);
 }
 
-// Следим за состоянием модалки
+// Следим за состоянием модального окна (скрываем secondaryButton при открытии)
 watch(showExerciseModal, (isOpen) => {
   if (isOpen) {
-    // В модалке цвет снизу сливается с попапом (bg_color)
     miniApp.setBottomBarColor("bg_color");
-    if (mainButton.isMounted()) {
-      mainButton.offClick(handleSavePlan);
+    if (mainButton.isMounted()) mainButton.offClick(handleMainButtonClick);
+    if (secondaryButton.isMounted()) secondaryButton.hide();
+  } else {
+    setupButtons();
+  }
+});
+
+// Следим за переключением режима просмотр / редактирование
+watch(isEditMode, () => {
+  setupButtons();
+});
+
+// --- Обработчики нажатий кнопок Telegram ---
+
+async function handleMainButtonClick() {
+  triggerHaptic("medium");
+
+  if (!isEditMode.value) {
+    // Режим просмотра: СТАРТ ТРЕНИРОВКИ
+    if (!planId.value) return;
+    try {
+      if (mainButton.isMounted()) mainButton.showLoader();
+      const session = await workoutStore.startWorkoutFromPlan(planId.value);
+      router.push(`/workout/${session.id}`);
+    } catch (e: any) {
+      showToast({ message: "Не удалось начать тренировку", position: "top" });
+    } finally {
+      if (mainButton.isMounted()) mainButton.hideLoader();
     }
   } else {
-    // Когда модалка закрывается — возвращаем управление родительской странице
-    setupParentMainButton();
+    // Режим редактирования: СОХРАНЕНИЕ ПЛАНА
+    await handleSavePlan();
   }
-});
+}
 
-// Синхронизация текста при изменении режимов (создание / редактирование)
-watch(parentMainButtonText, (newText) => {
-  if (mainButton.isMounted() && !showExerciseModal.value) {
-    mainButton.setText(newText);
+function handleSecondaryButtonClick() {
+  triggerHaptic("light");
+
+  if (!isEditMode.value) {
+    // Включаем режим редактирования
+    isEditMode.value = true;
+  } else {
+    // Отменяем редактирование и возвращаем исходные данные
+    isEditMode.value = false;
+    loadPlanData();
   }
-});
+}
 
-onMounted(async () => {
-  if (isEditing.value && planId.value) {
+async function loadPlanData() {
+  if (isExistingPlan.value && planId.value) {
     const plan = await plansStore.getPlanById(planId.value);
     if (plan) {
       name.value = plan.name;
@@ -123,16 +189,22 @@ onMounted(async () => {
       }
     }
   }
+}
 
-  // Первичная инициализация кнопки страницы
-  setupParentMainButton();
+onMounted(async () => {
+  await loadPlanData();
+  setupButtons();
 });
 
 onUnmounted(() => {
   if (mainButton.isMounted()) {
-    mainButton.offClick(handleSavePlan);
+    mainButton.offClick(handleMainButtonClick);
     mainButton.hideLoader();
     mainButton.hide();
+  }
+  if (secondaryButton.isMounted()) {
+    secondaryButton.offClick(handleSecondaryButtonClick);
+    secondaryButton.hide();
   }
 });
 
@@ -146,15 +218,14 @@ function selectColor(color: string) {
   selectedColor.value = color;
 }
 
-// Открытие модалки для НОВОГО упражнения
 function openAddExerciseModal() {
   triggerHaptic("light");
   editingExerciseData.value = null;
   showExerciseModal.value = true;
 }
 
-// Открытие модалки для РЕДАКТИРОВАНИЯ
 function openEditExerciseModal(exercise: WorkoutPlanExerciseItem) {
+  if (!isEditMode.value) return; // Редактировать упражнение можно только в режиме редактирования
   triggerHaptic("light");
   editingExerciseData.value = {
     client_id: exercise.client_id,
@@ -168,12 +239,9 @@ function openEditExerciseModal(exercise: WorkoutPlanExerciseItem) {
   showExerciseModal.value = true;
 }
 
-// Прием сохраненных данных из модалки
 function handleSaveExerciseFromModal(data: ExerciseModalOutput) {
   if (data.client_id) {
-    const index = exercises.value.findIndex(
-      (e) => e.client_id === data.client_id
-    );
+    const index = exercises.value.findIndex((e) => e.client_id === data.client_id);
     if (index !== -1) {
       exercises.value[index] = {
         client_id: data.client_id,
@@ -239,22 +307,20 @@ async function handleSavePlan() {
   };
 
   try {
-    triggerHaptic("medium");
-
     if (mainButton.isMounted()) {
       mainButton.showLoader();
-      mainButton.disable(); // Предотвращаем повторные нажатия
+      mainButton.disable();
     }
 
-    if (isEditing.value && planId.value) {
+    if (isExistingPlan.value && planId.value) {
       await plansStore.updatePlan(planId.value, payload);
       showToast({ message: "План обновлен", type: "success" });
+      isEditMode.value = false; // Переводим обратно в режим просмотра
     } else {
       await plansStore.createPlan(payload);
       showToast({ message: "План создан", type: "success" });
+      router.back();
     }
-
-    router.back();
   } catch (error: any) {
     const msg = error?.response?.data?.detail || "Ошибка при сохранении плана";
     showToast({ message: msg, position: "top" });
@@ -270,9 +336,9 @@ async function handleSavePlan() {
 <template>
   <AppPage title="" :back="false">
     <ScreenHeader
-      :title="isEditing ? 'Редактировать план' : 'Новый план'"
+      :title="isEditMode ? 'Редактировать план' : 'Новый план'"
       :subtitle="
-        isEditing
+        isEditMode
           ? 'Обновите параметры плана'
           : 'Соберите шаблон своей тренировки'
       "
