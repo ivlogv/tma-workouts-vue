@@ -19,6 +19,7 @@ declare module 'vue' {
     ExerciseModal: typeof import('./src/components/ExerciseModal.vue')['default']
     RecentWorkouts: typeof import('./src/components/RecentWorkouts.vue')['default']
     RecentWorkoutsNew: typeof import('./src/components/RecentWorkoutsNew.vue')['default']
+    RecentWorkoutsOld: typeof import('./src/components/RecentWorkoutsOld.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ScreenHeader: typeof import('./src/components/ScreenHeader.vue')['default']

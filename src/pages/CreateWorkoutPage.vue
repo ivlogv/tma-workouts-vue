@@ -2,7 +2,12 @@
 import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { showToast } from "vant";
-import { mainButton, secondaryButton, miniApp, themeParams } from "@tma.js/sdk-vue";
+import {
+  mainButton,
+  secondaryButton,
+  miniApp,
+  themeParams,
+} from "@tma.js/sdk-vue";
 import { Icon } from "@iconify/vue";
 import draggable from "vuedraggable";
 
@@ -39,11 +44,44 @@ const planId = computed(() => {
 });
 
 // Существует ли план в базе
-const isExistingPlan = computed(() => planId.value !== null && !isNaN(planId.value));
+const isExistingPlan = computed(
+  () => planId.value !== null && !isNaN(planId.value),
+);
 
 // Состояние режима: true = редактирование/создание, false = просмотр
 const isEditMode = ref(!isExistingPlan.value);
 
+// Определяем режим страницы: создание, редактирование или просмотр
+const pageMode = computed<"create" | "edit" | "view">(() => {
+  if (!isExistingPlan.value) return "create";
+  return isEditMode.value ? "edit" : "view";
+});
+
+// Динамический заголовок экрана
+const headerTitle = computed(() => {
+  switch (pageMode.value) {
+    case "create":
+      return "Новый план";
+    case "edit":
+      return "Редактирование";
+    case "view":
+      return name.value || "План тренировки";
+  }
+});
+
+// Динамический подзаголовок
+const headerSubtitle = computed(() => {
+  switch (pageMode.value) {
+    case "create":
+      return "Настройка упражнений и подходов";
+    case "edit":
+      return "Изменение структуры плана";
+    case "view":
+      return "Обзор тренировки";
+  }
+});
+
+// Цвета для выбора карточки плана
 const COLORS = [
   "#3390ec",
   "#ff9500",
@@ -76,48 +114,53 @@ function setupButtons() {
 
   miniApp.setBottomBarColor("secondary_bg_color");
   const appBgColor = themeParams.bgColor() || "#1c1c1e";
+  secondaryButton.setBgColor(appBgColor as `#${string}`);
 
-  if (!isEditMode.value) {
-    // --------------------------------------------------
-    // РЕЖИМ ПРОСМОТРА
-    // --------------------------------------------------
-    mainButton.setText("Начать");
-    mainButton.enableShineEffect();
-    mainButton.enable();
-    mainButton.show();
+  switch (pageMode.value) {
+    case "view":
+      mainButton.setText("Начать тренировку");
+      mainButton.enableShineEffect();
+      mainButton.enable();
+      mainButton.show();
 
-    secondaryButton.setText("Редактировать");
-    secondaryButton.setParams({
-      position: "left", // Размещаем над mainButton
-    });
-    secondaryButton.setBgColor(appBgColor as `#${string}`);
-    secondaryButton.enable();
-    secondaryButton.show();
-  } else {
-    // --------------------------------------------------
-    // РЕЖИМ РЕДАКТИРОВАНИЯ / СОЗДАНИЯ
-    // --------------------------------------------------
-    mainButton.setText(isExistingPlan.value ? "Сохранить" : "Создать");
-    mainButton.disableShineEffect();
-    mainButton.enable();
-    mainButton.show();
-
-    if (isExistingPlan.value) {
-      // Для существующего плана даем возможность отменить редактирование
-      secondaryButton.setText("Отмена");
+      secondaryButton.setText("Редактировать");
       secondaryButton.setParams({ position: "left" });
-      secondaryButton.setBgColor(appBgColor as `#${string}`);
+
       secondaryButton.enable();
       secondaryButton.show();
-    } else {
-      // При создании нового плана secondaryButton не нужен
+      break;
+
+    case "edit":
+      mainButton.setText("Сохранить изменения");
+      mainButton.disableShineEffect();
+      mainButton.enable();
+      mainButton.show();
+
+      secondaryButton.setText("Отмена");
+      secondaryButton.setParams({ position: "left" });
+      // secondaryButton.setBgColor(appBgColor as `#${string}`);
+      secondaryButton.enable();
+      secondaryButton.show();
+      break;
+
+    case "create":
+      mainButton.setText("Создать план");
+      mainButton.disableShineEffect();
+      mainButton.enable();
+      mainButton.show();
+
       secondaryButton.hide();
-    }
+      break;
   }
 
   mainButton.onClick(handleMainButtonClick);
   secondaryButton.onClick(handleSecondaryButtonClick);
 }
+
+// Следим за изменением состояния страницы
+watch(pageMode, () => {
+  setupButtons();
+});
 
 // Следим за состоянием модального окна (скрываем secondaryButton при открытии)
 watch(showExerciseModal, (isOpen) => {
@@ -131,29 +174,29 @@ watch(showExerciseModal, (isOpen) => {
 });
 
 // Следим за переключением режима просмотр / редактирование
-watch(isEditMode, () => {
-  setupButtons();
-});
+// watch(isEditMode, () => {
+//   setupButtons();
+// });
 
 // --- Обработчики нажатий кнопок Telegram ---
 
 async function handleMainButtonClick() {
   triggerHaptic("medium");
 
-  if (!isEditMode.value) {
-    // Режим просмотра: СТАРТ ТРЕНИРОВКИ
+  if (pageMode.value === "view") {
+    // СТАРТ ТРЕНИРОВКИ
     if (!planId.value) return;
     try {
       if (mainButton.isMounted()) mainButton.showLoader();
       const session = await workoutStore.startWorkoutFromPlan(planId.value);
       router.push(`/workout/${session.id}`);
-    } catch (e: any) {
+    } catch (e) {
       showToast({ message: "Не удалось начать тренировку", position: "top" });
     } finally {
       if (mainButton.isMounted()) mainButton.hideLoader();
     }
   } else {
-    // Режим редактирования: СОХРАНЕНИЕ ПЛАНА
+    // СОХРАНЕНИЕ (при 'create' или 'edit')
     await handleSavePlan();
   }
 }
@@ -161,11 +204,11 @@ async function handleMainButtonClick() {
 function handleSecondaryButtonClick() {
   triggerHaptic("light");
 
-  if (!isEditMode.value) {
-    // Включаем режим редактирования
+  if (pageMode.value === "view") {
+    // Включаем редактирование
     isEditMode.value = true;
-  } else {
-    // Отменяем редактирование и возвращаем исходные данные
+  } else if (pageMode.value === "edit") {
+    // Отменяем изменения и возвращаемся в view
     isEditMode.value = false;
     loadPlanData();
   }
@@ -244,7 +287,9 @@ function openEditExerciseModal(exercise: WorkoutPlanExerciseItem) {
 
 function handleSaveExerciseFromModal(data: ExerciseModalOutput) {
   if (data.client_id) {
-    const index = exercises.value.findIndex((e) => e.client_id === data.client_id);
+    const index = exercises.value.findIndex(
+      (e) => e.client_id === data.client_id,
+    );
     if (index !== -1) {
       exercises.value[index] = {
         client_id: data.client_id,
@@ -339,17 +384,86 @@ async function handleSavePlan() {
 <template>
   <AppPage title="" :back="false">
     <ScreenHeader
-      :title="isEditMode ? 'Редактировать план' : 'Новый план'"
-      :subtitle="
-        isEditMode
-          ? 'Обновите параметры плана'
-          : 'Соберите шаблон своей тренировки'
-      "
+      :title="headerTitle"
+      :subtitle="headerSubtitle"
       :show-back="true"
       @back="handleGoBack"
     />
 
-    <div class="editor-form">
+    <!-- ========================================== -->
+    <!-- 1. РЕЖИМ ПРОСМОТРА (VIEW MODE)             -->
+    <!-- ========================================== -->
+    <div v-if="pageMode === 'view'" class="view-container">
+      <!-- Шапка плана с цветом и описанием -->
+      <div class="plan-card-hero" :style="{ '--accent-color': selectedColor || '#3390ec' }">
+        <div class="plan-hero-header">
+          <div class="plan-color-badge" :style="{ backgroundColor: selectedColor || '#3390ec' }">
+            <Icon icon="tabler:dumbbell" width="24" height="24" color="#ffffff" />
+          </div>
+          <div class="plan-hero-titles">
+            <h2 class="plan-hero-title">{{ name }}</h2>
+            <span class="plan-hero-count">
+              {{ exercises.length }} {{ exercises.length === 1 ? 'упражнение' : 'упражнений' }}
+            </span>
+          </div>
+        </div>
+
+        <p v-if="description" class="plan-hero-desc">
+          {{ description }}
+        </p>
+      </div>
+
+      <!-- Список упражнений (Static) -->
+      <div class="view-section">
+        <div class="view-section-title">Состав тренировки</div>
+
+        <div v-if="exercises.length === 0" class="empty-state-view">
+          <Icon icon="mdi:format-list-bulleted" width="32" height="32" />
+          <span>В этом плане пока нет упражнений</span>
+        </div>
+
+        <van-cell-group v-else inset class="view-exercises-group">
+          <div
+            v-for="(exercise, index) in exercises"
+            :key="exercise.client_id"
+            class="view-exercise-card"
+          >
+            <div class="exercise-index">{{ index + 1 }}</div>
+
+            <div class="exercise-main-content">
+              <div class="exercise-name">{{ exercise.name }}</div>
+
+              <!-- Нормативы (Подходы / Повторы / Вес) -->
+              <div class="exercise-tags">
+                <span v-if="exercise.sets" class="exercise-tag">
+                  <Icon icon="mdi:repeat" width="14" height="14" />
+                  {{ exercise.sets }} подх.
+                </span>
+                <span v-if="exercise.reps" class="exercise-tag">
+                  <Icon icon="mdi:counter" width="14" height="14" />
+                  {{ exercise.reps }} повт.
+                </span>
+                <span v-if="exercise.weight" class="exercise-tag exercise-tag--highlight">
+                  <Icon icon="mdi:weight-kilogram" width="14" height="14" />
+                  {{ exercise.weight }}
+                </span>
+              </div>
+
+              <!-- Заметка к упражнению, если есть -->
+              <p v-if="exercise.note" class="exercise-note">
+                <Icon icon="mdi:notebook-text-outline" width="14" height="14" />
+                {{ exercise.note }}
+              </p>
+            </div>
+          </div>
+        </van-cell-group>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 2. РЕЖИМ РЕДАКТИРОВАНИЯ (EDIT / CREATE)    -->
+    <!-- ========================================== -->
+    <div v-else class="editor-form">
       <!-- Название тренировки -->
       <div class="form-section">
         <label class="form-label">Название плана *</label>
@@ -402,7 +516,7 @@ async function handleSavePlan() {
         </div>
       </div>
 
-      <!-- Список упражнений -->
+      <!-- Список упражнений с Drag & Drop -->
       <div class="form-section">
         <div class="section-header">
           <label class="form-label">Упражнения ({{ exercises.length }})</label>
@@ -453,9 +567,7 @@ async function handleSavePlan() {
                   <span class="exercise-name">{{ exercise.name }}</span>
                   <div class="exercise-sub">
                     <span v-if="exercise.sets">{{ exercise.sets }} подх.</span>
-                    <span v-if="exercise.reps"
-                      >• {{ exercise.reps }} повт.</span
-                    >
+                    <span v-if="exercise.reps">• {{ exercise.reps }} повт.</span>
                     <span v-if="exercise.weight">• {{ exercise.weight }}</span>
                   </div>
                 </div>
@@ -689,5 +801,166 @@ async function handleSavePlan() {
 
 .exercises-list > * {
   transition: transform 0.22s cubic-bezier(0.2, 0, 0, 1) !important;
+}
+
+
+/* --- Стили для режима просмотра (View Mode) --- */
+.view-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 24px;
+}
+
+.plan-card-hero {
+  background: var(--tg-theme-secondary-bg-color, #1c1c1e);
+  border-radius: 16px;
+  padding: 16px;
+  border-left: 4px solid var(--accent-color, #3390ec);
+}
+
+.plan-hero-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.plan-color-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.plan-hero-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.plan-hero-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--tg-theme-text-color, #ffffff);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.plan-hero-count {
+  font-size: 13px;
+  color: var(--tg-theme-hint-color, #8e8e93);
+}
+
+.plan-hero-desc {
+  margin: 12px 0 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--tg-theme-text-color, #ffffff);
+  opacity: 0.85;
+}
+
+.view-section-title {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--tg-theme-hint-color, #8e8e93);
+  margin-bottom: 8px;
+  padding-left: 4px;
+}
+
+.view-exercises-group {
+  margin: 0 !important;
+  border-radius: 16px !important;
+  background: var(--tg-theme-secondary-bg-color, #1c1c1e) !important;
+  overflow: hidden;
+}
+
+.view-exercise-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.view-exercise-card:last-child {
+  border-bottom: none;
+}
+
+.exercise-index {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--tg-theme-hint-color, #8e8e93);
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.exercise-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.exercise-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--tg-theme-text-color, #ffffff);
+}
+
+.exercise-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.exercise-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--tg-theme-hint-color, #8e8e93);
+}
+
+.exercise-tag--highlight {
+  color: var(--tg-theme-button-color, #3390ec);
+  background: rgba(51, 144, 236, 0.12);
+}
+
+.exercise-note {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--tg-theme-hint-color, #8e8e93);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-style: italic;
+}
+
+.empty-state-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 32px 16px;
+  background: var(--tg-theme-secondary-bg-color, #1c1c1e);
+  border-radius: 16px;
+  color: var(--tg-theme-hint-color, #8e8e93);
+  font-size: 14px;
 }
 </style>
