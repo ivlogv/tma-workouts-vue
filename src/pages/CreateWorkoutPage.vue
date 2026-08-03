@@ -440,7 +440,6 @@ async function handleSavePlan() {
                   {{ exercise.sets }} подх.
                 </span>
                 <span v-if="exercise.reps" class="exercise-tag">
-                  <Icon icon="mdi:counter" width="14" height="14" />
                   {{ exercise.reps }} повт.
                 </span>
                 <span v-if="exercise.weight" class="exercise-tag exercise-tag--highlight">
@@ -813,7 +812,7 @@ async function handleSavePlan() {
 }
 
 .plan-card-hero {
-  background: var(--tg-theme-secondary-bg-color, #1c1c1e);
+  background: var(--tg-theme-bg-color, #1c1c1e);
   border-radius: 16px;
   padding: 16px;
   border-left: 4px solid var(--accent-color, #3390ec);
@@ -875,7 +874,7 @@ async function handleSavePlan() {
 .view-exercises-group {
   margin: 0 !important;
   border-radius: 16px !important;
-  background: var(--tg-theme-secondary-bg-color, #1c1c1e) !important;
+  background: var(--tg-theme-bg-color, #1c1c1e) !important;
   overflow: hidden;
 }
 
@@ -884,7 +883,7 @@ async function handleSavePlan() {
   align-items: flex-start;
   gap: 12px;
   padding: 14px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--tg-theme-secondary-bg-color, #1c1c1e);
 }
 
 .view-exercise-card:last-child {
