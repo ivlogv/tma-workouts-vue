@@ -397,7 +397,6 @@ async function handleSavePlan() {
           v-if="pageMode !== 'view'"
           type="button"
           class="avatar-edit-btn"
-          @click="/* здесь будет открытие модалки выбора иконки/цвета */"
         >
           <Icon icon="mdi:pencil" width="16" height="16" color="#ffffff" />
         </button>
