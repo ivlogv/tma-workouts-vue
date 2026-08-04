@@ -521,6 +521,7 @@ async function handleSavePlan() {
         <div class="section-header">
           <label class="form-label">Упражнения ({{ exercises.length }})</label>
           <button
+            v-if="exercises.length > 0"
             v-ripple
             type="button"
             class="add-btn-link"
@@ -614,7 +615,7 @@ async function handleSavePlan() {
 .form-label {
   font-size: 12px;
   font-weight: 600;
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
   letter-spacing: 0.05em;
   color: var(--tg-theme-accent-text-color, #3390ec);
   margin-bottom: 8px;
@@ -626,6 +627,8 @@ async function handleSavePlan() {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 8px;
+  padding-top: 16px;
+  padding-left: 12px;
 }
 
 .section-header .form-label {
@@ -921,11 +924,11 @@ position: relative !important;
 .view-section-title {
   font-size: 12px;
   font-weight: 600;
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
   letter-spacing: 0.5px;
   color: var(--tg-theme-accent-text-color, #8e8e93);
   margin-bottom: 6px;
-  padding-top: 8px;
+  padding-top: 16px;
   padding-left: 12px;
 }
 
