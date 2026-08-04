@@ -392,6 +392,15 @@ async function handleSavePlan() {
         :style="{ backgroundColor: selectedColor || '#3390ec' }"
       >
         <Icon icon="tabler:dumbbell" width="48" height="48" color="#ffffff" />
+
+        <button
+          v-if="pageMode !== 'view'"
+          type="button"
+          class="avatar-edit-btn"
+          @click="/* здесь будет открытие модалки выбора иконки/цвета */"
+        >
+          <Icon icon="mdi:pencil" width="16" height="16" color="#ffffff" />
+        </button>
       </div>
     </div>
 
@@ -503,6 +512,7 @@ async function handleSavePlan() {
       </div>
 
       <!-- Выбор цвета -->
+       <!-- TODO: перенести в IconColorPickerModal -->
       <div class="form-section">
         <label class="form-label">Цвет карточки</label>
         <div class="color-picker">
@@ -617,6 +627,8 @@ async function handleSavePlan() {
 .form-section {
   display: flex;
   flex-direction: column;
+  background-color: var(--tg-theme-bg-color);
+  border-radius: 14px !important;
 }
 
 .form-label {
@@ -834,6 +846,29 @@ async function handleSavePlan() {
   transition: background-color 0.25s ease, transform 0.2s ease;
 }
 
+/* Плавающая кнопка редактирования в правом нижнем углу */
+.avatar-edit-btn {
+  position: absolute;
+  right: -6px;
+  bottom: -6px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--tg-theme-button-color, #3390ec);
+  border: 3px solid var(--tg-theme-bg-color, #1c1c1e);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  padding: 0;
+  transition: transform 0.15s ease, background-color 0.2s ease;
+}
+
+.avatar-edit-btn:active {
+  transform: scale(0.9);
+}
+
 /* --- Стили для режима просмотра (View Mode) --- */
 .view-container {
   display: flex;
@@ -894,14 +929,19 @@ async function handleSavePlan() {
 }
 
 /* Секция списка упражнений */
+.view-section {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--tg-theme-bg-color);
+  border-radius: 14px !important;
+}
+
 .view-section-title {
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: var(--tg-theme-accent-color, #8e8e93);
-  background-color: var(--tg-theme-bg-color);
-  border-radius: 14px !important;
+  color: var(--tg-theme-accent-text-color, #8e8e93);
   margin-bottom: 6px;
   padding-left: 4px;
 }
