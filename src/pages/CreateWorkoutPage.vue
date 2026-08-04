@@ -618,7 +618,7 @@ async function handleSavePlan() {
   /* text-transform: uppercase; */
   letter-spacing: 0.05em;
   color: var(--tg-theme-accent-text-color, #3390ec);
-  margin-bottom: 8px;
+  /* margin-bottom: 8px; */
   padding-top: 12px;
   padding-left: 12px;
 }
@@ -627,8 +627,8 @@ async function handleSavePlan() {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  /* margin-bottom: 8px; */
-  padding-top: 12px;
+  margin-bottom: 8px;
+  /* padding-top: 12px; */
   padding-left: 12px;
 }
 
@@ -647,6 +647,7 @@ async function handleSavePlan() {
   gap: 2px;
   cursor: pointer;
   padding: 2px 6px;
+  padding-right: 8px;
 }
 
 .form-group {

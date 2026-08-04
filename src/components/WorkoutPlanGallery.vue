@@ -64,7 +64,6 @@ const displayPlans = computed(() => props.plans.slice(0, props.maxItems));
   font-weight: 600;
   margin: 0 16px 8px 16px;
   padding-top: 12px;
-  padding-left: 12px;
 }
 
 /* Скролл-контейнер */
@@ -72,8 +71,7 @@ const displayPlans = computed(() => props.plans.slice(0, props.maxItems));
   display: flex;
   gap: 12px;
   overflow-x: auto;
-  /* padding: 0 16px 16px 16px; */
-  padding: 16px;
+  padding: 0 16px 16px 16px;
   box-sizing: border-box;
 
   -webkit-overflow-scrolling: touch;
