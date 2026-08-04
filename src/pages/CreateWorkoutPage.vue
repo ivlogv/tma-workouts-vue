@@ -114,7 +114,9 @@ function setupButtons() {
 
   miniApp.setBottomBarColor("secondary_bg_color");
   const appBgColor = themeParams.bgColor() || "#1c1c1e";
+  const buttonTextColor = themeParams.buttonColor() || "#3390ec";
   secondaryButton.setBgColor(appBgColor as `#${string}`);
+  secondaryButton.setTextColor(buttonTextColor as `#${string}`);
 
   switch (pageMode.value) {
     case "view":
@@ -802,32 +804,32 @@ async function handleSavePlan() {
   transition: transform 0.22s cubic-bezier(0.2, 0, 0, 1) !important;
 }
 
-
 /* --- Стили для режима просмотра (View Mode) --- */
 .view-container {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding-bottom: 24px;
+  gap: 12px;
+  padding-bottom: 20px;
 }
 
+/* Герой-карточка (Hero Block) */
 .plan-card-hero {
   background: var(--tg-theme-bg-color, #1c1c1e);
-  border-radius: 16px;
-  padding: 16px;
-  border-left: 4px solid var(--accent-color, #3390ec);
+  border-radius: 14px;
+  padding: 12px 14px;
+  border-left: 3px solid var(--accent-color, #3390ec);
 }
 
 .plan-hero-header {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .plan-color-badge {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -837,11 +839,11 @@ async function handleSavePlan() {
 .plan-hero-titles {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 .plan-hero-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--tg-theme-text-color, #ffffff);
   margin: 0;
@@ -849,40 +851,42 @@ async function handleSavePlan() {
 }
 
 .plan-hero-count {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--tg-theme-hint-color, #8e8e93);
 }
 
 .plan-hero-desc {
-  margin: 12px 0 0;
-  font-size: 14px;
-  line-height: 1.4;
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.35;
   color: var(--tg-theme-text-color, #ffffff);
-  opacity: 0.85;
+  opacity: 0.8;
 }
 
+/* Секция списка упражнений */
 .view-section-title {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: var(--tg-theme-hint-color, #8e8e93);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   padding-left: 4px;
 }
 
 .view-exercises-group {
   margin: 0 !important;
-  border-radius: 16px !important;
+  border-radius: 14px !important;
   background: var(--tg-theme-bg-color, #1c1c1e) !important;
   overflow: hidden;
 }
 
+/* Компактная строчка упражнения */
 .view-exercise-card {
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 14px 16px;
+  align-items: center; /* Центрируем всё в одну плотную строку */
+  gap: 10px;
+  padding: 8px 12px;  /* Уменьшенный вертикальный padding для плотности */
   border-bottom: 1px solid var(--tg-theme-secondary-bg-color, #1c1c1e);
 }
 
@@ -890,50 +894,58 @@ async function handleSavePlan() {
   border-bottom: none;
 }
 
+/* Номер упражнения */
 .exercise-index {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
   color: var(--tg-theme-hint-color, #8e8e93);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  margin-top: 2px;
 }
 
 .exercise-main-content {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 2px;
 }
 
 .exercise-name {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
+  line-height: 1.25;
   color: var(--tg-theme-text-color, #ffffff);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
+/* Тэги / Нормативы */
 .exercise-tags {
   display: flex;
+  align-items: center;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 4px;
 }
 
 .exercise-tag {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 3px 8px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.06);
-  font-size: 12px;
+  gap: 3px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 11px;
   font-weight: 500;
   color: var(--tg-theme-hint-color, #8e8e93);
+  line-height: 1.4;
 }
 
 .exercise-tag--highlight {
@@ -941,25 +953,29 @@ async function handleSavePlan() {
   background: rgba(51, 144, 236, 0.12);
 }
 
+/* Заметка */
 .exercise-note {
-  margin: 2px 0 0;
-  font-size: 12px;
+  margin: 1px 0 0;
+  font-size: 11px;
   color: var(--tg-theme-hint-color, #8e8e93);
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .empty-state-view {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 32px 16px;
-  background: var(--tg-theme-secondary-bg-color, #1c1c1e);
-  border-radius: 16px;
+  gap: 6px;
+  padding: 24px 16px;
+  background: var(--tg-theme-bg-color, #1c1c1e);
+  border-radius: 14px;
   color: var(--tg-theme-hint-color, #8e8e93);
-  font-size: 14px;
+  font-size: 13px;
 }
 </style>

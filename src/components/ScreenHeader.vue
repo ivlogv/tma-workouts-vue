@@ -53,7 +53,8 @@ const slots = useSlots();
   justify-content: space-between;
   padding: 10px 16px;
   /* Учитываем верхнюю безопасную зону Telegram и челки */
-  padding-top: calc(var(--tg-viewport-safe-area-inset-top, 0px) + 8px);
+  /* padding-top: calc(var(--tg-viewport-safe-area-inset-top, 0px) + 8px); */
+  padding-top: 0px;
   margin-bottom: 12px;
   min-height: 44px;
 }
@@ -81,7 +82,7 @@ const slots = useSlots();
 }
 
 .title {
-  font-size: 1.05rem; /* ~17px — стандартный размер iOS/Telegram navigation bar */
+  font-size: 1.2rem; /* ~17px — стандартный размер iOS/Telegram navigation bar */
   line-height: 1.25;
   font-weight: 600;
   margin: 0;
