@@ -117,6 +117,8 @@ function handleHistoryClick() {
 <style scoped>
 .workouts-wrapper {
   margin-bottom: 16px;
+  background-color: var(--tg-theme-bg-color);
+  border-radius: 14px;
 }
 
 .workouts-title {

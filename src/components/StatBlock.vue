@@ -27,15 +27,16 @@ function goToStats() {
 
 <template>
   <div class="stats-section">
+    <!-- TODO: удалить шапку и добавить снизу сетки кнопку открытия статистики -->
     <!-- Шапка блока с инлайн-кнопкой для перехода в полную статистику -->
-    <div class="stats-header">
+    <!-- <div class="stats-header">
       <span class="stats-title">Статистика</span>
 
       <button v-ripple class="inline-stats-btn" @click="goToStats">
         <span>Подробнее</span>
         <Icon icon="lucide:chevron-right" width="14" height="14" />
       </button>
-    </div>
+    </div> -->
 
     <!-- Твой существующий сетка-виджет -->
     <div class="stats-grid">

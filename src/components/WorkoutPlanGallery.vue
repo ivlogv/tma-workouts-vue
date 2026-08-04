@@ -54,6 +54,8 @@ const displayPlans = computed(() => props.plans.slice(0, props.maxItems));
   margin-bottom: 16px;
   width: 100%;
   overflow: visible;
+  background-color: var(--tg-theme-bg-color, #1c1c1c);
+  border-radius: 14px;
 }
 
 .plans-title {

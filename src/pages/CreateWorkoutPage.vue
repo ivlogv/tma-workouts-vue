@@ -415,7 +415,7 @@ async function handleSavePlan() {
     <div v-if="pageMode === 'view'" class="view-container">
       <!-- Список упражнений (Static) -->
       <div class="view-section">
-        <div class="view-section-title">Состав тренировки</div>
+        <!-- <div class="view-section-title">Состав тренировки</div> -->
 
         <div v-if="exercises.length === 0" class="empty-state-view">
           <Icon icon="mdi:format-list-bulleted" width="32" height="32" />
@@ -465,7 +465,7 @@ async function handleSavePlan() {
     <div v-else class="editor-form">
       <!-- Название тренировки -->
       <div class="form-section">
-        <label class="form-label">Название плана *</label>
+        <label class="form-label">Название *</label>
         <van-cell-group inset class="form-group">
           <van-field
             v-model="name"
@@ -478,14 +478,14 @@ async function handleSavePlan() {
 
       <!-- Описание -->
       <div class="form-section">
-        <label class="form-label">Описание (опционально)</label>
+        <!-- <label class="form-label">Описание (опционально)</label> -->
         <van-cell-group inset class="form-group">
           <van-field
             v-model="description"
             type="textarea"
             rows="2"
             autosize
-            placeholder="Например: Акцент на верхнюю часть грудных"
+            placeholder="Описание..."
             class="app-input"
           />
         </van-cell-group>
@@ -613,13 +613,14 @@ async function handleSavePlan() {
 }
 
 .form-label {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   /* text-transform: uppercase; */
   letter-spacing: 0.05em;
   color: var(--tg-theme-accent-text-color, #3390ec);
   margin-bottom: 8px;
-  padding-left: 4px;
+  padding-top: 16px;
+  padding-left: 12px;
 }
 
 .section-header {

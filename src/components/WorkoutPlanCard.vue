@@ -48,7 +48,7 @@ const emit = defineEmits<{
   min-width: 140px;
   width: 140px;
   flex: 0 0 140px;
-  background-color: var(--tg-theme-bg-color, #1c1c1e);
+  background-color: var(--tg-theme-secondary-bg-color, #1c1c1e);
   border-radius: 12px;
   padding: 14px 12px;
   display: flex;
