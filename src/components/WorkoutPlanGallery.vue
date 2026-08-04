@@ -53,7 +53,7 @@ const displayPlans = computed(() => props.plans.slice(0, props.maxItems));
 .plans-wrapper {
   margin-bottom: 16px;
   width: 100%;
-  overflow: visible;
+  overflow: hidden;
   background-color: var(--tg-theme-bg-color, #1c1c1c);
   border-radius: 14px;
 }
@@ -63,6 +63,8 @@ const displayPlans = computed(() => props.plans.slice(0, props.maxItems));
   font-size: 14px;
   font-weight: 600;
   margin: 0 16px 8px 16px;
+  padding-top: 12px;
+  padding-left: 12px;
 }
 
 /* Скролл-контейнер */
@@ -70,14 +72,8 @@ const displayPlans = computed(() => props.plans.slice(0, props.maxItems));
   display: flex;
   gap: 12px;
   overflow-x: auto;
-
-  /* Растягиваем с учетом боковых отступов */
-  width: calc(100% + 32px);
-  margin-left: -16px;
-  margin-right: -16px;
-
-  /* Задаем левый отступ, а правый компенсируем через ::after */
-  padding-left: 16px;
+  /* padding: 0 16px 16px 16px; */
+  padding: 16px;
   box-sizing: border-box;
 
   -webkit-overflow-scrolling: touch;

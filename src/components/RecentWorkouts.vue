@@ -126,6 +126,8 @@ function handleHistoryClick() {
   font-size: 14px;
   font-weight: 600;
   margin: 0 16px 8px 16px;
+  padding-top: 12px;
+  padding-left: 12px;
 }
 
 :deep(.van-cell-group--inset) {

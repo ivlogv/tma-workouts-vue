@@ -619,7 +619,7 @@ async function handleSavePlan() {
   letter-spacing: 0.05em;
   color: var(--tg-theme-accent-text-color, #3390ec);
   margin-bottom: 8px;
-  padding-top: 16px;
+  padding-top: 12px;
   padding-left: 12px;
 }
 
@@ -627,8 +627,8 @@ async function handleSavePlan() {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 8px;
-  padding-top: 16px;
+  /* margin-bottom: 8px; */
+  padding-top: 12px;
   padding-left: 12px;
 }
 
@@ -929,7 +929,7 @@ position: relative !important;
   letter-spacing: 0.5px;
   color: var(--tg-theme-accent-text-color, #8e8e93);
   margin-bottom: 6px;
-  padding-top: 16px;
+  padding-top: 12px;
   padding-left: 12px;
 }
 
