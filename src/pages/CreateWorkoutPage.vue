@@ -385,10 +385,19 @@ async function handleSavePlan() {
 
 <template>
   <AppPage title="" :back="false">
-    <ScreenHeader
-      :title="headerTitle"
-      :subtitle="headerSubtitle"
-      :show-back="true"
+    <!-- Крупная иконка карточки плана (в самом верху, над ScreenHeader) -->
+    <div class="plan-hero-avatar-wrapper">
+      <div
+        class="plan-hero-avatar"
+        :style="{ backgroundColor: selectedColor || '#3390ec' }"
+      >
+        <Icon icon="tabler:dumbbell" width="48" height="48" color="#ffffff" />
+      </div>
+    </div>
+
+    <ScreenHeader v-if="pageMode === 'view'"
+      :title="name"
+      :subtitle="description || ''"
       @back="handleGoBack"
     />
 
@@ -397,7 +406,7 @@ async function handleSavePlan() {
     <!-- ========================================== -->
     <div v-if="pageMode === 'view'" class="view-container">
       <!-- Шапка плана с цветом и описанием -->
-      <div class="plan-card-hero" :style="{ '--accent-color': selectedColor || '#3390ec' }">
+      <!-- <div class="plan-card-hero" :style="{ '--accent-color': selectedColor || '#3390ec' }">
         <div class="plan-hero-header">
           <div class="plan-color-badge" :style="{ backgroundColor: selectedColor || '#3390ec' }">
             <Icon icon="tabler:dumbbell" width="24" height="24" color="#ffffff" />
@@ -413,7 +422,7 @@ async function handleSavePlan() {
         <p v-if="description" class="plan-hero-desc">
           {{ description }}
         </p>
-      </div>
+      </div> -->
 
       <!-- Список упражнений (Static) -->
       <div class="view-section">
@@ -804,6 +813,27 @@ async function handleSavePlan() {
   transition: transform 0.22s cubic-bezier(0.2, 0, 0, 1) !important;
 }
 
+/* Контейнер для центрирования плашки с иконкой*/
+.plan-hero-avatar-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 12px;
+  padding-bottom: 8px;
+}
+
+/* Квадратная карточка-аватар с закруглёнными углами */
+.plan-hero-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.25s ease, transform 0.2s ease;
+}
+
 /* --- Стили для режима просмотра (View Mode) --- */
 .view-container {
   display: flex;
@@ -869,7 +899,9 @@ async function handleSavePlan() {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: var(--tg-theme-hint-color, #8e8e93);
+  color: var(--tg-theme-accent-color, #8e8e93);
+  background-color: var(--tg-theme-bg-color);
+  border-radius: 14px !important;
   margin-bottom: 6px;
   padding-left: 4px;
 }
