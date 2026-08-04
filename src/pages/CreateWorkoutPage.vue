@@ -413,25 +413,6 @@ async function handleSavePlan() {
     <!-- 1. РЕЖИМ ПРОСМОТРА (VIEW MODE)             -->
     <!-- ========================================== -->
     <div v-if="pageMode === 'view'" class="view-container">
-      <!-- Шапка плана с цветом и описанием -->
-      <!-- <div class="plan-card-hero" :style="{ '--accent-color': selectedColor || '#3390ec' }">
-        <div class="plan-hero-header">
-          <div class="plan-color-badge" :style="{ backgroundColor: selectedColor || '#3390ec' }">
-            <Icon icon="tabler:dumbbell" width="24" height="24" color="#ffffff" />
-          </div>
-          <div class="plan-hero-titles">
-            <h2 class="plan-hero-title">{{ name }}</h2>
-            <span class="plan-hero-count">
-              {{ exercises.length }} {{ exercises.length === 1 ? 'упражнение' : 'упражнений' }}
-            </span>
-          </div>
-        </div>
-
-        <p v-if="description" class="plan-hero-desc">
-          {{ description }}
-        </p>
-      </div> -->
-
       <!-- Список упражнений (Static) -->
       <div class="view-section">
         <div class="view-section-title">Состав тренировки</div>
@@ -635,7 +616,7 @@ async function handleSavePlan() {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--tg-theme-button-color, #3390ec);
+  color: var(--tg-theme-accent-text-color, #3390ec);
   margin-bottom: 8px;
   padding-left: 4px;
 }
@@ -654,7 +635,7 @@ async function handleSavePlan() {
 .add-btn-link {
   background: none;
   border: none;
-  color: var(--tg-theme-button-color, #3390ec);
+  color: var(--tg-theme-accent-text-color, #3390ec);
   font-size: 14px;
   font-weight: 600;
   display: inline-flex;
@@ -835,6 +816,7 @@ async function handleSavePlan() {
 
 /* Квадратная карточка-аватар с закруглёнными углами */
 .plan-hero-avatar {
+position: relative !important;
   width: 96px;
   height: 96px;
   border-radius: 24px;
@@ -843,11 +825,12 @@ async function handleSavePlan() {
   justify-content: center;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   transition: background-color 0.25s ease, transform 0.2s ease;
+  flex-shrink: 0;
 }
 
 /* Плавающая кнопка редактирования в правом нижнем углу */
 .avatar-edit-btn {
-  position: absolute;
+  position: absolute !important;
   right: -6px;
   bottom: -6px;
   width: 32px;
@@ -942,7 +925,8 @@ async function handleSavePlan() {
   letter-spacing: 0.5px;
   color: var(--tg-theme-accent-text-color, #8e8e93);
   margin-bottom: 6px;
-  padding-left: 4px;
+  padding-top: 8px;
+  padding-left: 12px;
 }
 
 .view-exercises-group {

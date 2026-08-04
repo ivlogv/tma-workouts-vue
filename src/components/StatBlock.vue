@@ -83,7 +83,7 @@ function goToStats() {
 }
 
 .stats-title {
-  color: var(--tg-theme-button-color, #3390ec);
+  color: var(--tg-theme-accent-text-color, #3390ec);
   font-size: 14px;
   font-weight: 600;
 }

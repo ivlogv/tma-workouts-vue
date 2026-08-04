@@ -57,7 +57,7 @@ const displayPlans = computed(() => props.plans.slice(0, props.maxItems));
 }
 
 .plans-title {
-  color: var(--tg-theme-button-color, #3390ec);
+  color: var(--tg-theme-accent-text-color, #3390ec);
   font-size: 14px;
   font-weight: 600;
   margin: 0 16px 8px 16px;
