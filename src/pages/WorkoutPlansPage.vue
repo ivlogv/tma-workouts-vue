@@ -102,12 +102,12 @@ onUnmounted(() => {
 
     <!-- Загрузка -->
     <div v-if="isLoading && plans.length === 0" class="empty-state">
-      <div class="empty-icon-wrap">Загрузка...</div>
+      <div class="empty-state__title">Загрузка...</div>
     </div>
 
     <!-- Ошибка -->
     <div v-else-if="error" class="empty-state">
-      <div class="empty-icon-wrap">{{ error }}</div>
+      <div class="empty-state__icon">{{ error }}</div>
       <button v-ripple class="btn-primary" @click="plansStore.fetchPlans">
         Попробовать снова
       </button>
@@ -115,11 +115,11 @@ onUnmounted(() => {
 
     <!-- Пустое состояние -->
     <div v-if="plans.length === 0" class="empty-state">
-      <div class="empty-icon-wrap">
+      <div class="empty-state__icon">
         <Icon icon="tabler:dumbbell" width="40" height="40" />
       </div>
-      <p class="empty-title">У вас пока нет планов</p>
-      <p class="empty-desc">
+      <p class="empty-state__title">У вас пока нет планов</p>
+      <p class="empty-state__desc">
         Создайте свой первый шаблон тренировки, чтобы легко отслеживать прогресс
       </p>
       <button v-ripple class="btn-primary" @click="handleCreateNewPlan">
@@ -236,58 +236,5 @@ onUnmounted(() => {
   color: var(--tg-theme-hint-color, #8e8e93);
   margin-top: 4px;
   font-weight: 500;
-}
-
-/* Пустое состояние */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 40px 20px;
-  background: var(--tg-theme-secondary-bg-color, #1c1c1e);
-  border-radius: 16px;
-  margin-top: 12px;
-}
-
-.empty-icon-wrap {
-  width: 68px;
-  height: 68px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.05);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--tg-theme-hint-color, #8e8e93);
-  margin-bottom: 12px;
-}
-
-.empty-title {
-  font-size: 17px;
-  font-weight: 600;
-  color: var(--tg-theme-text-color, #fff);
-  margin: 0 0 6px;
-}
-
-.empty-desc {
-  font-size: 13px;
-  color: var(--tg-theme-hint-color, #8e8e93);
-  margin: 0 0 18px;
-  max-width: 240px;
-}
-
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 20px;
-  border-radius: 12px;
-  border: none;
-  background: var(--tg-theme-button-color, #3390ec);
-  color: var(--tg-theme-button-text-color, #fff);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
 }
 </style>

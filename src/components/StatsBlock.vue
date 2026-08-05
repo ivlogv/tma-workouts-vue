@@ -29,19 +29,6 @@ defineProps({
 </template>
 
 <style scoped>
-.card {
-  background: var(--tg-theme-bg-color, #1c1c1c);
-  padding: 16px;
-  border-radius: 12px;
-  color: var(--tg-theme-text-color, #fff);
-  font-family: sans-serif;
-}
-
-.card__title {
-  color: var(--tg-theme-button-color, #fff);
-  font-size: 14px;
-}
-
 .stats-block {
   display: flex;
   justify-content: space-between;

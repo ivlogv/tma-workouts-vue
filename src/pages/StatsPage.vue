@@ -13,7 +13,7 @@ import AppPage from "@/components/AppPage.vue";
 
     <main class="stats-content">
       <!-- Использование переиспользуемого StatCard -->
-      <section class="summary-grid">
+      <section class="grid grid--2">
         <StatCard
           icon="lucide:weight"
           label="Поднятый вес"
@@ -110,14 +110,6 @@ import AppPage from "@/components/AppPage.vue";
   font-size: 14px;
   font-weight: 600;
   color: var(--tg-theme-text-color, #ffffff);
-}
-
-.badge {
-  font-size: 11px;
-  background: rgba(255, 255, 255, 0.08);
-  padding: 4px 8px;
-  border-radius: 20px;
-  color: var(--tg-theme-hint-color, #8e8e93);
 }
 
 .chart-mock {

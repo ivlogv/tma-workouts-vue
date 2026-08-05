@@ -215,7 +215,7 @@ onUnmounted(() => {
         <h3 class="popup-title">
           {{ initialData ? "Редактировать упражнение" : "Новое упражнение" }}
         </h3>
-        <button class="popup-close-btn" @click="closeModal">
+        <button class="icon-btn" @click="closeModal">
           <Icon icon="mdi:close" width="20" height="20" />
         </button>
       </div>
@@ -225,7 +225,7 @@ onUnmounted(() => {
         <div class="modal-field">
           <label class="modal-label">Название *</label>
           <div class="autocomplete-wrapper">
-            <van-cell-group inset class="modal-form-group">
+            <van-cell-group inset class="form-group form-group-sm form-group__modal">
               <van-field
                 v-model="modalForm.name"
                 placeholder="Начните вводить (например: Жим)"
@@ -259,7 +259,7 @@ onUnmounted(() => {
         <div class="modal-row">
           <div class="modal-field col">
             <label class="modal-label">Подходы</label>
-            <van-cell-group inset class="modal-form-group">
+            <van-cell-group inset class="form-group form-group-sm form-group__modal">
               <van-field
                 v-model="modalForm.sets"
                 placeholder="3-4"
@@ -270,7 +270,7 @@ onUnmounted(() => {
 
           <div class="modal-field col">
             <label class="modal-label">Повторения / Время</label>
-            <van-cell-group inset class="modal-form-group">
+            <van-cell-group inset class="form-group form-group-sm form-group__modal">
               <van-field
                 v-model="modalForm.reps"
                 placeholder="8-12"
@@ -282,7 +282,7 @@ onUnmounted(() => {
 
         <div class="modal-field">
           <label class="modal-label">Целевой вес (опционально)</label>
-          <van-cell-group inset class="modal-form-group">
+          <van-cell-group inset class="form-group form-group-sm form-group__modal">
             <van-field
               v-model="modalForm.weight"
               placeholder="Например: 60 кг"
@@ -293,7 +293,7 @@ onUnmounted(() => {
 
         <div class="modal-field">
           <label class="modal-label">Заметка к упражнению</label>
-          <van-cell-group inset class="modal-form-group">
+          <van-cell-group inset class="form-group form-group-sm form-group__modal">
             <van-field
               v-model="modalForm.note"
               type="textarea"
@@ -335,19 +335,6 @@ onUnmounted(() => {
   margin: 0;
 }
 
-.popup-close-btn {
-  background: rgba(255, 255, 255, 0.08);
-  border: none;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--tg-theme-hint-color, #8e8e93);
-  cursor: pointer;
-}
-
 .popup-body {
   display: flex;
   flex-direction: column;
@@ -358,6 +345,8 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  background: var(--tg-theme-secondary-bg-color, #2c2c2e);
+  border-radius: 12px;
 }
 
 .modal-row {
@@ -371,25 +360,10 @@ onUnmounted(() => {
 
 .modal-label {
   font-size: 12px;
-  color: var(--tg-theme-hint-color, #8e8e93);
+  color: var(--tg-theme-accent-text-color, #8e8e93);
   font-weight: 500;
-}
-
-.modal-form-group {
-  margin: 0 !important;
-  border-radius: 12px !important;
-  overflow: hidden;
-  background: var(--tg-theme-secondary-bg-color, #2c2c2e) !important;
-}
-
-.app-input {
-  background: transparent !important;
-  padding: 12px 14px !important;
-}
-
-:deep(.van-field__control) {
-  color: var(--tg-theme-text-color, #fff) !important;
-  font-size: 15px;
+  padding-left: 12px;
+  padding-top: 12px;
 }
 
 /* Автокомплит */

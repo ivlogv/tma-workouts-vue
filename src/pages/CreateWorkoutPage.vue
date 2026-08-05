@@ -519,8 +519,8 @@ async function handleSavePlan() {
             v-for="color in COLORS"
             :key="color"
             type="button"
-            class="color-circle"
-            :class="{ 'color-circle--selected': selectedColor === color }"
+            class="color-swatch"
+            :class="{ 'color-swatch--selected': selectedColor === color }"
             :style="{ backgroundColor: color }"
             @click="selectColor(color)"
           >
@@ -543,7 +543,7 @@ async function handleSavePlan() {
             v-if="exercises.length > 0"
             v-ripple
             type="button"
-            class="add-btn-link"
+            class="btn-link"
             @click="openAddExerciseModal"
           >
             <Icon icon="mdi:plus" width="18" height="18" />
@@ -630,24 +630,6 @@ async function handleSavePlan() {
   padding-bottom: 24px;
 }
 
-.form-section {
-  display: flex;
-  flex-direction: column;
-  background-color: var(--tg-theme-bg-color);
-  border-radius: 14px !important;
-}
-
-.form-label {
-  font-size: 14px;
-  font-weight: 600;
-  /* text-transform: uppercase; */
-  letter-spacing: 0.05em;
-  color: var(--tg-theme-accent-text-color, #3390ec);
-  /* margin-bottom: 8px; */
-  padding-top: 0px;
-  padding-left: 0px;
-}
-
 .section-header {
   display: flex;
   align-items: center;
@@ -657,63 +639,9 @@ async function handleSavePlan() {
   padding-left: 12px;
 }
 
-.section-header .form-label {
-  margin-bottom: 0;
-}
-
-.add-btn-link {
-  background: none;
-  border: none;
-  color: var(--tg-theme-accent-text-color, #3390ec);
-  font-size: 14px;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  cursor: pointer;
-  padding: 2px 6px;
-  padding-right: 8px;
-}
-
-.form-group {
-  margin: 0 !important;
-  border-radius: 14px !important;
-  overflow: hidden;
-  background: var(--tg-theme-bg-color, #1c1c1e) !important;
-}
-
-.app-input {
-  background: transparent !important;
-  padding: 12px 14px !important;
-}
-
 :deep(.van-field__control) {
   color: var(--tg-theme-text-color, #fff) !important;
   font-size: 15px;
-}
-
-.color-picker {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.color-circle {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  border: 2px solid transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: transform 0.15s ease;
-}
-
-.color-circle--selected {
-  border-color: #ffffff;
-  transform: scale(1.08);
 }
 
 .exercises-group {

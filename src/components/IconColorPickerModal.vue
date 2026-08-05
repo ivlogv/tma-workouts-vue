@@ -264,7 +264,7 @@ onUnmounted(() => {
 
 .modal-label {
   font-size: 12px;
-  color: var(--tg-theme-hint-color, #8e8e93);
+  color: var(--tg-theme-accent-text-color, #8e8e93);
   font-weight: 500;
 }
 

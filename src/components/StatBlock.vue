@@ -40,7 +40,7 @@ function goToStats() {
     </div> -->
 
     <!-- Твой существующий сетка-виджет -->
-    <div class="stats-grid">
+    <div class="grid grid--2">
       <StatCard
         icon="lucide:award"
         label="Стрик"
@@ -107,9 +107,4 @@ function goToStats() {
   touch-action: manipulation;
 }
 
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
 </style>

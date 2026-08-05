@@ -213,18 +213,6 @@ onUnmounted(() => {
   font-family: sans-serif;
 }
 
-.card__title {
-  color: var(--tg-theme-accent-text-color, #fff);
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 0.9;
-  margin: 16px 12px 12px 12px;
-}
-
-.title {
-  color: var(--tg-theme-text-color);
-}
-
 .icon {
   color: var(--tg-theme-text-color);
 }

@@ -23,7 +23,7 @@ const slots = useSlots();
 
     <!-- Текстовый блок строго по центру -->
     <div class="title-group">
-      <h1 class="title">{{ title }}</h1>
+      <h1 class="heading heading--lg">{{ title }}</h1>
       <p v-if="subtitle" class="subtitle">{{ subtitle }}</p>
     </div>
 
