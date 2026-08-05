@@ -17,6 +17,7 @@ import ExerciseModal, {
   type ExerciseModalOutput,
   type ExerciseModalInitialData,
 } from "@/components/ExerciseModal.vue";
+import IconColorPickerModal from "@/components/IconColorPickerModal.vue";
 import { triggerHaptic } from "@/shared/utils/haptic";
 import { usePlansStore } from "@/stores/plans";
 import { useWorkoutStore } from "@/stores/workouts";
@@ -37,6 +38,7 @@ const router = useRouter();
 const route = useRoute();
 const plansStore = usePlansStore();
 const workoutStore = useWorkoutStore();
+
 
 const planId = computed(() => {
   const id = route.params.id;
@@ -102,6 +104,22 @@ const exercises = ref<WorkoutPlanExerciseItem[]>([]);
 // Состояние модального окна
 const showExerciseModal = ref(false);
 const editingExerciseData = ref<ExerciseModalInitialData | null>(null);
+const isIconColorModalOpen = ref(false);
+
+const planForm = ref({
+  color: "#3390ec",
+  icon: "lucide:dumbbell"
+});
+
+function openIconColorModal() {
+  triggerHaptic("light");
+  isIconColorModalOpen.value = true;
+}
+
+function handleIconColorSave(data: { icon: string; color: string }) {
+  planForm.value.icon = data.icon;
+  planForm.value.color = data.color;
+}
 
 // --- Настройка MainButton & SecondaryButton ---
 
@@ -397,6 +415,7 @@ async function handleSavePlan() {
           v-if="pageMode !== 'view'"
           type="button"
           class="avatar-edit-btn"
+          @click="openIconColorModal"
         >
           <Icon icon="mdi:pencil" width="16" height="16" color="#ffffff" />
         </button>
@@ -465,7 +484,7 @@ async function handleSavePlan() {
     <div v-else class="editor-form">
       <!-- Название тренировки -->
       <div class="form-section">
-        <label class="form-label">Название *</label>
+        <label class="section-header form-label">Название *</label>
         <van-cell-group inset class="form-group">
           <van-field
             v-model="name"
@@ -493,7 +512,7 @@ async function handleSavePlan() {
 
       <!-- Выбор цвета -->
        <!-- TODO: перенести в IconColorPickerModal -->
-      <div class="form-section">
+      <!-- <div class="form-section">
         <label class="form-label">Цвет карточки</label>
         <div class="color-picker">
           <button
@@ -514,7 +533,7 @@ async function handleSavePlan() {
             />
           </button>
         </div>
-      </div>
+      </div> -->
 
       <!-- Список упражнений с Drag & Drop -->
       <div class="form-section">
@@ -593,6 +612,12 @@ async function handleSavePlan() {
       :initial-data="editingExerciseData"
       @save="handleSaveExerciseFromModal"
     />
+
+    <IconColorPickerModal
+      v-model:show="isIconColorModalOpen"
+      :initial-data="{ icon: planForm.icon, color: planForm.color }"
+      @save="handleIconColorSave"
+    />
   </AppPage>
 </template>
 
@@ -619,8 +644,8 @@ async function handleSavePlan() {
   letter-spacing: 0.05em;
   color: var(--tg-theme-accent-text-color, #3390ec);
   /* margin-bottom: 8px; */
-  padding-top: 12px;
-  padding-left: 12px;
+  padding-top: 0px;
+  padding-left: 0px;
 }
 
 .section-header {
@@ -628,7 +653,7 @@ async function handleSavePlan() {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 8px;
-  /* padding-top: 12px; */
+  padding-top: 12px;
   padding-left: 12px;
 }
 

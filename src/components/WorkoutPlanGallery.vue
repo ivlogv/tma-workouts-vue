@@ -25,7 +25,7 @@ const displayPlans = computed(() => props.plans.slice(0, props.maxItems));
 
 <template>
   <div class="plans-wrapper">
-    <div class="plans-title">Мои программы</div>
+    <div class="plans-title">Быстрый старт</div>
 
     <div class="workout-gallery">
       <!-- Список карточек программ -->
@@ -42,7 +42,7 @@ const displayPlans = computed(() => props.plans.slice(0, props.maxItems));
 
       <!-- Пунктирная кнопка "Ещё / Все программы" -->
       <button v-ripple class="more-card" type="button" @click="emit('more-click')">
-        <Icon icon="lucide:plus" width="28" height="28" class="more-icon" />
+        <Icon :icon="plans?.length ? 'lucide:biceps-flexed' : 'lucide:plus'" width="28" height="28" class="more-icon" />
         <span class="more-text">{{ plans?.length ? "Все программы" : "Добавить программу" }}</span>
       </button>
     </div>
