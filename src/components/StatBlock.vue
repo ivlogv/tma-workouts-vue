@@ -1,18 +1,15 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
 import { Icon } from "@iconify/vue";
-import StatCard from "./StatCard.vue";
 import { triggerHaptic } from "@/shared/utils/haptic.ts";
 
 withDefaults(
   defineProps<{
     daysInRow: number;
     thisWeek: number;
-    totalWorkouts?: number;
     avgDuration?: number;
   }>(),
   {
-    totalWorkouts: 0,
     avgDuration: 0,
   }
 );
@@ -27,84 +24,135 @@ function goToStats() {
 
 <template>
   <div class="stats-section">
-    <!-- TODO: удалить шапку и добавить снизу сетки кнопку открытия статистики
-               сделать 1 блок со статистикой за текущую неделю для главной страницы вместо 4 в виде сетки -->
-    <!-- Шапка блока с инлайн-кнопкой для перехода в полную статистику -->
-    <!-- <div class="stats-header">
-      <span class="stats-title">Статистика</span>
+    <div class="stats-unified">
+      <!-- Метрики в один ряд -->
+      <div class="stats-row">
+        <!-- Стрик -->
+        <div class="stat-item">
+          <div class="stat-value-group">
+            <Icon icon="lucide:flame" width="18" height="18" class="stat-icon icon-flame" />
+            <span class="stat-value">{{ daysInRow }}</span>
+          </div>
+          <span class="stat-label">Стрик (дней)</span>
+        </div>
 
-      <button v-ripple class="inline-stats-btn" @click="goToStats">
+        <div class="stat-divider"></div>
+
+        <!-- На этой неделе -->
+        <div class="stat-item">
+          <div class="stat-value-group">
+            <Icon icon="lucide:calendar" width="18" height="18" class="stat-icon" />
+            <span class="stat-value">{{ thisWeek }}</span>
+          </div>
+          <span class="stat-label">На этой неделе</span>
+        </div>
+
+        <div class="stat-divider"></div>
+
+        <!-- Среднее время -->
+        <div class="stat-item">
+          <div class="stat-value-group">
+            <Icon icon="lucide:clock" width="18" height="18" class="stat-icon" />
+            <span class="stat-value">{{ avgDuration }} <span class="stat-unit">мин</span></span>
+          </div>
+          <span class="stat-label">Ср. время</span>
+        </div>
+      </div>
+
+      <!-- Нижняя кнопка перехода -->
+      <button v-ripple class="stats-bottom-btn" @click="goToStats">
         <span>Подробнее</span>
-        <Icon icon="lucide:chevron-right" width="14" height="14" />
+        <Icon icon="lucide:chevron-right" width="16" height="16" />
       </button>
-    </div> -->
-
-    <!-- Твой существующий сетка-виджет -->
-    <div class="grid grid--2">
-      <StatCard
-        icon="lucide:award"
-        label="Стрик"
-        :value="daysInRow"
-        :unit="daysInRow === 1 ? 'день подряд' : 'дней подряд'"
-      />
-
-      <StatCard
-        icon="lucide:calendar"
-        label="На этой неделе"
-        :value="thisWeek"
-        unit="тренировок"
-      />
-
-      <StatCard
-        icon="lucide:trending-up"
-        label="Всего"
-        :value="totalWorkouts"
-        unit="за всё время"
-      />
-
-      <StatCard
-        icon="lucide:clock"
-        label="Ср. время"
-        :value="avgDuration"
-        unit="минут"
-      />
     </div>
   </div>
 </template>
 
 <style scoped>
 .stats-section {
-  margin-bottom: 16px;
+  margin-bottom: 0;
 }
 
-.stats-header {
+.stats-unified {
+  background: var(--tg-theme-bg-color, #1c1c1e);
+  border-radius: 14px;
+  padding-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.stats-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin: 0 4px 8px 16px;
+  justify-content: space-around;
 }
 
-.stats-title {
-  color: var(--tg-theme-accent-text-color, #3390ec);
-  font-size: 14px;
-  font-weight: 600;
+.stat-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
 
-/* Инлайн-кнопка перехода */
-.inline-stats-btn {
-  background: transparent;
-  border: none;
-  color: var(--tg-theme-link-color, #3390ec);
+.stat-value-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stat-icon {
+  color: var(--tg-theme-button-color, #3390ec);
+}
+
+.stat-icon.icon-flame {
+  color: #ff9500;
+}
+
+.stat-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--tg-theme-text-color, #ffffff);
+  line-height: 1;
+}
+
+.stat-unit {
   font-size: 13px;
   font-weight: 500;
+  color: var(--tg-theme-hint-color, #8e8e93);
+}
+
+.stat-label {
+  font-size: 11px;
+  color: var(--tg-theme-hint-color, #8e8e93);
+  font-weight: 500;
+  text-align: center;
+}
+
+.stat-divider {
+  width: 1px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Нижняя кнопка */
+.stats-bottom-btn {
+  width: 100%;
+  background: var(--tg-theme-bg-color, rgba(255, 255, 255, 0.04));
+  border: none;
+  border-radius: 14px;
+  padding: 14px;
+  color: var(--tg-theme-button-color, #3390ec);
+  font-size: 12px;
+  font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 2px;
-  padding: 4px 8px;
-  border-radius: 8px;
+  justify-content: center;
+  gap: 4px;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+  transition: background-color 0.15s ease;
 }
-
 </style>

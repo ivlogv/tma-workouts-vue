@@ -163,7 +163,7 @@ pre {
 }
 
 .form-label {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.05em;
   color: var(--tg-theme-button-color, #3390ec);
@@ -183,6 +183,7 @@ pre {
 }
 
 .form-group--sm {
+  font-size: 12px;
   border-radius: 12px !important;
 }
 
