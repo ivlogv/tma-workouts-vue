@@ -119,6 +119,8 @@ function openIconColorModal() {
 function handleIconColorSave(data: { icon: string; color: string }) {
   planForm.value.icon = data.icon;
   planForm.value.color = data.color;
+
+  selectColor(data.color);
 }
 
 // --- Настройка MainButton & SecondaryButton ---
@@ -419,7 +421,7 @@ async function handleSavePlan() {
         class="plan-hero-avatar"
         :style="{ backgroundColor: selectedColor || '#3390ec' }"
       >
-        <Icon icon="tabler:dumbbell" width="48" height="48" color="#ffffff" />
+        <Icon icon={{ planForm.value.icon }} width="48" height="48" color="#ffffff" />
 
         <button
           v-if="pageMode !== 'view'"

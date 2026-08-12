@@ -168,7 +168,6 @@ watch(
 onUnmounted(() => {
   if (mainButton.isMounted()) {
     mainButton.offClick(handleStart);
-    mainButton.hide();
   }
 });
 </script>
