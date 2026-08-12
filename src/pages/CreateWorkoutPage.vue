@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch } from "vue";
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { showToast } from "vant";
 import {
@@ -195,12 +195,13 @@ watch(showExerciseModal, (isOpen) => {
   }
 });
 
-watch(isIconColorModalOpen, (isOpen) => {
+watch(isIconColorModalOpen, async (isOpen) => {
   if (isOpen) {
     miniApp.setBottomBarColor("bg_color");
     if (mainButton.isMounted()) mainButton.offClick(handleMainButtonClick);
     if (secondaryButton.isMounted()) secondaryButton.hide();
   } else {
+    await nextTick();
     setupButtons();
   }
 });
@@ -421,7 +422,7 @@ async function handleSavePlan() {
         class="plan-hero-avatar"
         :style="{ backgroundColor: selectedColor || '#3390ec' }"
       >
-        <Icon icon={{ planForm.value.icon }} width="48" height="48" color="#ffffff" />
+        <Icon icon="planForm.icon" width="48" height="48" color="#ffffff" />
 
         <button
           v-if="pageMode !== 'view'"
