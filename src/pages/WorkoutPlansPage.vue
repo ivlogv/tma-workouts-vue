@@ -168,16 +168,9 @@ onUnmounted(() => {
       </van-cell-group>
     </div>
 
-    <!-- <van-button
-      type="primary"
-      @click="handleCreateNewPlan"
-    >
-      Создать новый план
-    </van-button> -->
-
-    <template #bottom>
+    <!-- <template #bottom>
       <BottomNav />
-    </template>
+    </template> -->
   </AppPage>
 </template>
 

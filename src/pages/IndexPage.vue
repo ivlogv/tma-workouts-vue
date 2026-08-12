@@ -199,9 +199,9 @@ onUnmounted(() => {
       {{ selectedId ? "Перейти к тренировке" : "Выбрать тренировку" }}
     </van-button> -->
 
-    <template #bottom>
+    <!-- <template #bottom>
       <BottomNav />
-    </template>
+    </template> -->
   </AppPage>
 </template>
 

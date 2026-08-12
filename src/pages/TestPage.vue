@@ -73,9 +73,9 @@ async function testFetchData() {
     <van-button type="primary" @click="testFetchData">Тест запроса</van-button>
     <p>{{ data }}</p>
 
-    <template #bottom>
+    <!-- <template #bottom>
       <BottomNav />
-    </template>
+    </template> -->
   </AppPage>
 </template>
 

@@ -10,9 +10,9 @@ import ScreenHeader from "@/components/ScreenHeader.vue";
 
     <p>Здесь будет отображаться история ваших тренировок.</p>
 
-    <template #bottom>
+    <!-- <template #bottom>
       <BottomNav />
-    </template>
+    </template> -->
   </AppPage>
 </template>
 

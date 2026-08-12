@@ -625,7 +625,7 @@ async function handleSavePlan() {
 .editor-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 12px;
   margin-top: 12px;
   padding-bottom: 24px;
 }
