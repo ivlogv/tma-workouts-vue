@@ -343,6 +343,11 @@ export interface components {
              */
             color: string | null;
             /**
+             * Icon
+             * @default lucide:dumbbell
+             */
+            icon: string | null;
+            /**
              * Exercises
              * @default []
              */
@@ -359,6 +364,11 @@ export interface components {
              * @default #3390ec
              */
             color: string | null;
+            /**
+             * Icon
+             * @default lucide:dumbbell
+             */
+            icon: string | null;
             /** Id */
             id: number;
             /** User Id */
@@ -382,6 +392,8 @@ export interface components {
             description?: string | null;
             /** Color */
             color?: string | null;
+            /** Icon */
+            icon?: string | null;
             /** Exercises */
             exercises?: components["schemas"]["PlanExerciseCreate"][] | null;
         };

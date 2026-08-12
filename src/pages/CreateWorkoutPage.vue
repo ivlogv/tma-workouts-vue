@@ -254,6 +254,7 @@ async function loadPlanData() {
       name.value = plan.name;
       description.value = plan.description || "";
       selectedColor.value = plan.color || COLORS[0];
+      planForm.value.icon = plan.icon || "lucide:dumbbell";
 
       if (plan.plan_exercises?.length) {
         exercises.value = plan.plan_exercises.map((ex, idx) => ({
@@ -377,6 +378,7 @@ async function handleSavePlan() {
     name: name.value.trim(),
     description: description.value.trim() || null,
     color: selectedColor.value ?? null,
+    icon: planForm.value.icon ?? "lucide:dumbbell",
     exercises: exercises.value.map((ex, index) => ({
       exercise_id: ex.exercise_id,
       sets: ex.sets.trim() || null,
@@ -422,7 +424,7 @@ async function handleSavePlan() {
         class="plan-hero-avatar"
         :style="{ backgroundColor: selectedColor || '#3390ec' }"
       >
-        <Icon icon="planForm.icon" width="48" height="48" color="#ffffff" />
+        <Icon icon="planForm.icon || 'lucide:dumbbell'" width="48" height="48" color="#ffffff" />
 
         <button
           v-if="pageMode !== 'view'"
