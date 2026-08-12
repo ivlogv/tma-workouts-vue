@@ -151,7 +151,7 @@ function setupButtons() {
       break;
 
     case "edit":
-      mainButton.setText("Сохранить изменения");
+      mainButton.setText("Сохранить");
       mainButton.disableShineEffect();
       mainButton.enable();
       mainButton.show();
@@ -184,6 +184,16 @@ watch(pageMode, () => {
 
 // Следим за состоянием модального окна (скрываем secondaryButton при открытии)
 watch(showExerciseModal, (isOpen) => {
+  if (isOpen) {
+    miniApp.setBottomBarColor("bg_color");
+    if (mainButton.isMounted()) mainButton.offClick(handleMainButtonClick);
+    if (secondaryButton.isMounted()) secondaryButton.hide();
+  } else {
+    setupButtons();
+  }
+});
+
+watch(isIconColorModalOpen, (isOpen) => {
   if (isOpen) {
     miniApp.setBottomBarColor("bg_color");
     if (mainButton.isMounted()) mainButton.offClick(handleMainButtonClick);
