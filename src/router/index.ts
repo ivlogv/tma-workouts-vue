@@ -6,6 +6,7 @@ import WorkoutPlansPage from "@/pages/WorkoutPlansPage.vue";
 import WorkoutsPage from "@/pages/WorkoutsPage.vue";
 import StatsPage from "@/pages/StatsPage.vue";
 import CreateWorkoutPage from "@/pages/CreateWorkoutPage.vue";
+import ActiveWorkoutPage from "@/pages/ActiveWorkoutPage.vue";
 // import InitDataPage from "@/pages/InitDataPage.vue";
 // import ThemeParamsPage from "@/pages/ThemeParamsPage.vue";
 // import LaunchParamsPage from "@/pages/LaunchParamsPage.vue";
@@ -51,12 +52,12 @@ export const routes = [
     },
   },
   {
-    path: "/workouts/active",
+    path: "/workouts/:id",
     name: "active-workout",
-    component: TestPage,
+    component: ActiveWorkoutPage,
     meta: {
       title: "Active Workout",
-      icon: "",
+      icon: "mdi:dumbbell",
     },
   },
   {

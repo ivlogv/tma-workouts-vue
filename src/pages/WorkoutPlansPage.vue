@@ -107,7 +107,6 @@ onUnmounted(() => {
           class="plan-cell"
           @click="handleOpenPlan(plan)"
         >
-          <!-- Иконка гантели слева на цветной подложке -->
           <template #icon>
             <div
               class="plan-icon-avatar"
