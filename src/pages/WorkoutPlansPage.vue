@@ -6,18 +6,10 @@ import { Icon } from "@iconify/vue";
 
 import AppPage from "@/components/AppPage.vue";
 import ScreenHeader from "@/components/ScreenHeader.vue";
-import BottomNav from "@/components/BottomNav.vue";
+// import BottomNav from "@/components/BottomNav.vue";
 import { triggerHaptic } from "@/shared/utils/haptic";
 import { usePlansStore } from "@/stores/plans";
 import type { WorkoutPlanResponse } from "@/shared/api/types";
-
-interface WorkoutPlan {
-  id: string;
-  name: string;
-  description?: string;
-  exercisesCount: number;
-  color: string;
-}
 
 const router = useRouter();
 const plansStore = usePlansStore();
@@ -29,31 +21,6 @@ const error = computed(() => plansStore.error);
 function exercisesCount(plan: WorkoutPlanResponse): number {
   return plan.plan_exercises?.length ?? 0;
 }
-
-// Моковые данные планов (в будущем заменятся на useWorkoutStore)
-// const plans = ref<WorkoutPlan[]>([
-//   {
-//     id: "1",
-//     name: "Силовая А (Грудь + Трицепс)",
-//     description: "Базовый сплит на верх тела",
-//     exercisesCount: 5,
-//     color: "#ff9500",
-//   },
-//   {
-//     id: "2",
-//     name: "День Спины & Бицепс",
-//     description: "Тяговые движения и подтягивания",
-//     exercisesCount: 6,
-//     color: "#3390ec",
-//   },
-//   {
-//     id: "3",
-//     name: "Ноги & Пресс",
-//     description: "Приседания, выпады и проработка кора",
-//     exercisesCount: 4,
-//     color: "#34c759",
-//   },
-// ]);
 
 function handleGoBack() {
   triggerHaptic("light");
@@ -146,7 +113,7 @@ onUnmounted(() => {
               class="plan-icon-avatar"
               :style="{ backgroundColor: plan.color || '#3390ec' }"
             >
-              <Icon icon="tabler:dumbbell" width="24" height="24" color="#ffffff" />
+              <Icon :icon="plan.icon || 'lucide:dumbbell'" width="24" height="24" color="#ffffff" />
             </div>
           </template>
 
