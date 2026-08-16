@@ -424,7 +424,7 @@ async function handleSavePlan() {
         class="plan-hero-avatar"
         :style="{ backgroundColor: selectedColor || '#3390ec' }"
       >
-        <Icon icon="planForm.icon || 'lucide:dumbbell'" width="48" height="48" color="#ffffff" />
+        <Icon :icon="planForm.icon || 'lucide:dumbbell'" width="48" height="48" color="#ffffff" />
 
         <button
           v-if="pageMode !== 'view'"
