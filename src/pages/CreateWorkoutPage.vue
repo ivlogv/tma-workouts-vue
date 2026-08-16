@@ -254,6 +254,7 @@ async function loadPlanData() {
       name.value = plan.name;
       description.value = plan.description || "";
       selectedColor.value = plan.color || COLORS[0];
+      planForm.value.color = plan.color || COLORS[0]!;
       planForm.value.icon = plan.icon || "lucide:dumbbell";
 
       if (plan.plan_exercises?.length) {
@@ -377,8 +378,8 @@ async function handleSavePlan() {
   const payload: WorkoutPlanCreate = {
     name: name.value.trim(),
     description: description.value.trim() || null,
-    color: selectedColor.value ?? null,
-    icon: planForm.value.icon ?? "lucide:dumbbell",
+    color: planForm.value.color || selectedColor.value || "#3390ec",
+    icon: planForm.value.icon || "lucide:dumbbell",
     exercises: exercises.value.map((ex, index) => ({
       exercise_id: ex.exercise_id,
       sets: ex.sets.trim() || null,
@@ -398,6 +399,7 @@ async function handleSavePlan() {
     if (isExistingPlan.value && planId.value) {
       await plansStore.updatePlan(planId.value, payload);
       showToast({ message: "План обновлен", type: "success" });
+      await loadPlanData();
       isEditMode.value = false; // Переводим обратно в режим просмотра
     } else {
       await plansStore.createPlan(payload);
