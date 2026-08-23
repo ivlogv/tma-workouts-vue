@@ -139,7 +139,7 @@ function setupTelegramButtons() {
   secondaryButton.offClick(togglePause);
 
   // MainButton: Завершение
-  mainButton.setText("Завершить тренировку");
+  mainButton.setText("Завершить");
   mainButton.enableShineEffect();
   mainButton.enable();
   mainButton.show();
@@ -284,7 +284,7 @@ onUnmounted(() => {
 
         <van-cell-group inset class="workout-exercises-group">
           <div
-            v-for="(planExercise, index) in activeWorkout.plan_exercises"
+            v-for="(planExercise) in activeWorkout.plan_exercises"
             :key="planExercise.id"
             class="exercise-item-wrapper"
             :class="{
@@ -349,7 +349,7 @@ onUnmounted(() => {
 
 /* Компактный Hero-блок */
 .timer-card {
-  background: var(--van-gray-8, #1c1c1e);
+  background: var(--tg-theme-bg-color, #1c1c1e);
   border-radius: 16px;
   padding: 16px;
   display: flex;
@@ -366,7 +366,7 @@ onUnmounted(() => {
   font-size: 2.75rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-  color: var(--van-text-color, #ffffff);
+  color: var(--tg-theme-text-color, #ffffff);
   line-height: 1;
   margin-bottom: 12px;
   display: flex;
@@ -404,7 +404,7 @@ onUnmounted(() => {
   display: flex;
   justify-content: space-between;
   font-size: 0.8125rem;
-  color: var(--van-gray-6, #8e8e93);
+  color: var(--tg-theme-hint-color, #8e8e93);
 }
 
 /* Список упражнений */
@@ -418,20 +418,20 @@ onUnmounted(() => {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--van-gray-6, #8e8e93);
+  color: var(--tg-theme-hint-color, #8e8e93);
   padding-left: 16px;
 }
 
 .workout-exercises-group {
   margin: 0 !important;
   overflow: hidden;
-  background: var(--van-gray-8, #1c1c1e) !important;
+  background: var(--tg-theme-bg-color, #1c1c1e) !important;
 }
 
 .exercise-item-wrapper {
   position: relative;
   padding: 14px 16px;
-  background: var(--van-gray-8, #1c1c1e);
+  background: var(--tg-theme-bg-color, #1c1c1e);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   cursor: pointer;
   user-select: none;
