@@ -41,7 +41,7 @@ function getWorkoutName(session: WorkoutSessionResponse): string {
 }
 
 const displayedWorkouts = computed(() => {
-  return [...(props.workouts || [])]
+  return [...(props.workouts ?? [])]
     .sort((a, b) => {
       const dateA = new Date(a.started_at || 0).getTime();
       const dateB = new Date(b.started_at || 0).getTime();
@@ -91,10 +91,12 @@ function handleHistoryClick() {
       </div>
 
       <!-- Пустое состояние -->
-      <div v-else-if="Array.isArray(workouts) &&workouts.length === 0" key="empty" class="empty">Нет завершённых тренировок</div>
+      <div v-else-if="workouts !== null && workouts.length === 0" key="empty" class="empty">
+        Нет завершённых тренировок
+      </div>
 
       <!-- Список ячеек -->
-      <div v-else key="content">
+      <div v-else-if="workouts?.length" key="content">
         <van-cell-group inset :border="false">
           <van-cell v-for="w in displayedWorkouts" :key="w.id" v-ripple :class="{ active: w.id === selectedId }"
             @click="handleClick(w.id)">
