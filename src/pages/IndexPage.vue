@@ -64,7 +64,7 @@ async function authenticateUser() {
     const user = await authApi.loginOrRegister();
     currentUser.value = user;
     console.log("Успешная авторизация в FastAPI:", user);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Ошибка при авторизации:", error);
 
     let errorMessage = "Ошибка авторизации";

@@ -60,28 +60,28 @@ const pageMode = computed<"create" | "edit" | "view">(() => {
 });
 
 // Динамический заголовок экрана
-const headerTitle = computed(() => {
-  switch (pageMode.value) {
-    case "create":
-      return "Новый план";
-    case "edit":
-      return "Редактирование";
-    case "view":
-      return name.value || "План тренировки";
-  }
-});
+// const headerTitle = computed(() => {
+//   switch (pageMode.value) {
+//     case "create":
+//       return "Новый план";
+//     case "edit":
+//       return "Редактирование";
+//     case "view":
+//       return name.value || "План тренировки";
+//   }
+// });
 
-// Динамический подзаголовок
-const headerSubtitle = computed(() => {
-  switch (pageMode.value) {
-    case "create":
-      return "Настройка упражнений и подходов";
-    case "edit":
-      return "Изменение структуры плана";
-    case "view":
-      return "Обзор тренировки";
-  }
-});
+// // Динамический подзаголовок
+// const headerSubtitle = computed(() => {
+//   switch (pageMode.value) {
+//     case "create":
+//       return "Настройка упражнений и подходов";
+//     case "edit":
+//       return "Изменение структуры плана";
+//     case "view":
+//       return "Обзор тренировки";
+//   }
+// });
 
 // Цвета для выбора карточки плана
 const COLORS = [
@@ -407,8 +407,8 @@ async function handleSavePlan() {
       showToast({ message: "План создан", type: "success" });
       router.back();
     }
-  } catch (error: any) {
-    const msg = error?.response?.data?.detail || "Ошибка при сохранении плана";
+  } catch (error: unknown) {
+    const msg = (error as { response?: { data?: { detail?: string } } })?.response?.data?.detail || "Ошибка при сохранении плана";
     showToast({ message: msg, position: "top" });
   } finally {
     if (mainButton.isMounted()) {
