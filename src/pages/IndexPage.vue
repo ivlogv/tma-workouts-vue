@@ -143,7 +143,7 @@ async function handlePlanClick(id: string | number) {
   triggerHaptic("light");
   try {
     const session = await workoutStore.startWorkoutFromPlan(id as number);
-    router.push(`/plans/${session.id}`);
+    router.push(`/workouts/${session.id}`);
   } catch {
     // Ошибка обработана в сторе
   }

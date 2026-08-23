@@ -37,12 +37,36 @@ const activeSession = computed(() => workoutStore.activeSession);
 const activeWorkout = ref<WorkoutPlanResponse | null>(null);
 
 watch(
-  () => activeSession.value?.plan_id,
+  () => activeSession.value?.plan_id, 
   async (planId) => {
     activeWorkout.value = planId ? await plansStore.getPlanById(planId) : null;
   },
   { immediate: true }
 );
+
+watch(
+  () => activeSession.value,
+  (session) => {
+    if (session) {
+      syncElapsedTime();
+    }
+  },
+  { immediate: true }
+);
+
+// Функция для синхронизации прошедшего времени со старта сессии
+function syncElapsedTime() {
+  const startedAt = activeSession.value?.started_at || activeSession.value?.started_at;
+  if (!startedAt) return;
+
+  // Парсим UTC/ISO время из activeSession
+  const startMs = new Date(startedAt).getTime();
+  const nowMs = Date.now();
+  
+  // Корректируем прошедшее время в секундах
+  const diffInSeconds = Math.floor((nowMs - startMs) / 1000);
+  elapsedTime.value = diffInSeconds > 0 ? diffInSeconds : 0;
+}
 
 
 // Парсинг общего количества подходов
@@ -79,6 +103,11 @@ const formattedTime = computed(() => {
 // --- Таймер ---
 function startTimer() {
   if (timerInterval) clearInterval(timerInterval);
+
+  // 1. Сразу синхронизируем время при старте/восстановлении
+  syncElapsedTime();
+
+  // 2. Инкрементируем каждую секунду
   timerInterval = window.setInterval(() => {
     if (!isPaused.value) {
       elapsedTime.value++;

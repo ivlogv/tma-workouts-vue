@@ -120,7 +120,7 @@ function handleClick() {
   background: var(--tg-theme-bg-color, #1c1c1e);
   border-radius: 12px;
   padding: 10px 14px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   user-select: none;

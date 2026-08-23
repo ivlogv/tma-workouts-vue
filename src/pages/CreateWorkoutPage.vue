@@ -225,6 +225,7 @@ async function handleMainButtonClick() {
       router.push(`/workouts/${session.id}`);
     } catch (e) {
       showToast({ message: "Не удалось начать тренировку", position: "top" });
+      console.error("Ошибка старта тренировки:", e);
     } finally {
       if (mainButton.isMounted()) mainButton.hideLoader();
     }
