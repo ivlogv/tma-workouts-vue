@@ -6,13 +6,13 @@ import type { WorkoutSessionResponse } from "@/shared/api/types";
 
 const props = withDefaults(
   defineProps<{
-    workouts?: WorkoutSessionResponse[];
+    workouts?: WorkoutSessionResponse[] | null;
     selectedId?: number;
     maxItems?: number;
     isLoading?: boolean;
   }>(),
   {
-    workouts: () => [],
+    workouts: null,
     maxItems: 3,
     isLoading: false,
   }
@@ -41,7 +41,7 @@ function getWorkoutName(session: WorkoutSessionResponse): string {
 }
 
 const displayedWorkouts = computed(() => {
-  return [...props.workouts]
+  return [...(props.workouts || [])]
     .sort((a, b) => {
       const dateA = new Date(a.started_at || 0).getTime();
       const dateB = new Date(b.started_at || 0).getTime();
@@ -91,7 +91,7 @@ function handleHistoryClick() {
       </div>
 
       <!-- Пустое состояние -->
-      <div v-else-if="workouts.length === 0" key="empty" class="empty">Нет завершённых тренировок</div>
+      <div v-else-if="Array.isArray(workouts) &&workouts.length === 0" key="empty" class="empty">Нет завершённых тренировок</div>
 
       <!-- Список ячеек -->
       <div v-else key="content">
