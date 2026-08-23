@@ -5,7 +5,7 @@ import type { WorkoutSessionResponse } from "@/shared/api/types";
 
 export const useHistoryStore = defineStore("history", () => {
   const sessions = ref<WorkoutSessionResponse[]>([]);
-  const isLoading = ref(false);
+  const isLoading = ref(true);
   const error = ref<string | null>(null);
 
   // Загрузка истории (по умолчанию фильтруем только завершённые, если требуется)

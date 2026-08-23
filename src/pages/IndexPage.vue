@@ -183,7 +183,8 @@ onUnmounted(() => {
     <StatBlock :days-in-row="daysInRow" :this-week="thisWeek" :total-workouts="totalWorkouts"
       :avg-duration="avgDuration" />
 
-    <RecentWorkouts :workouts="historyStore.sessions" :selected-id="selectedId" :is-loading="isAuthLoading"
+    <RecentWorkouts :workouts="historyStore.sessions" :selected-id="selectedId"
+      :is-loading="isAuthLoading || historyStore.isLoading"
       @select="toggleSelect" @open-history="router.push('/history')" />
 
     <WorkoutPlanGallery :plans="plansStore.plans" @plan-click="handlePlanClick" @more-click="handleMorePlans" />
