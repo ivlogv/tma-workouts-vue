@@ -258,7 +258,7 @@ onUnmounted(() => {
 
 <template>
   <AppPage title="" :back="false">
-    <ScreenHeader title="Тренировка" @back="handleExit" />
+    <ScreenHeader :title="activeWorkout?.name ?? 'Тренировка'" @back="handleExit" />
 
     <div v-if="activeWorkout" class="active-workout-container">
       <!-- 1. Компактная карточка таймера и общего прогресса -->

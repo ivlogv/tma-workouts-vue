@@ -66,51 +66,67 @@ function handleHistoryClick() {
     <div class="workouts-title">Последние тренировки</div>
 
     <!-- Состояние загрузки -->
-    <div v-if="isLoading" class="empty">Загрузка истории...</div>
+    <Transition name="fade-expand" mode="out-in">
+      <div v-if="isLoading" key="loading" class="skeleton-container">
+        <van-cell-group inset :border="false">
+          <van-cell class="skeleton-cell">
+            <template #title>
+              <div class="skeleton-line skeleton-title"></div>
+            </template>
+            <template #label>
+              <div class="skeleton-line skeleton-date"></div>
+            </template>
+            <template #right-icon>
+              <div class="skeleton-line skeleton-icon"></div>
+            </template>
+          </van-cell>
 
-    <!-- Пустое состояние -->
-    <div v-else-if="workouts.length === 0" class="empty">Нет завершённых тренировок</div>
+          <!-- Скелетон кнопки "Вся история" -->
+          <van-cell class="history-cell">
+            <template #title>
+              <div class="skeleton-line skeleton-history"></div>
+            </template>
+          </van-cell>
+        </van-cell-group>
+      </div>
 
-    <!-- Список ячеек -->
-    <van-cell-group v-else inset :border="false">
-      <van-cell
-        v-for="w in displayedWorkouts"
-        :key="w.id"
-        v-ripple
-        :class="{ active: w.id === selectedId }"
-        @click="handleClick(w.id)"
-      >
-        <template #title>
-          <div class="workout-name">{{ getWorkoutName(w) }}</div>
-        </template>
+      <!-- Пустое состояние -->
+      <div v-else-if="workouts.length === 0" key="empty" class="empty">Нет завершённых тренировок</div>
 
-        <template #label>
-          <div class="workout-date">
-            {{ formatDate(w.finished_at || w.started_at) }}
-          </div>
-        </template>
+      <!-- Список ячеек -->
+      <div v-else key="content">
+        <van-cell-group inset :border="false">
+          <van-cell v-for="w in displayedWorkouts" :key="w.id" v-ripple :class="{ active: w.id === selectedId }"
+            @click="handleClick(w.id)">
+            <template #title>
+              <div class="workout-name">{{ getWorkoutName(w) }}</div>
+            </template>
 
-        <template #right-icon>
-          <div class="workout-icon">
-            <Icon icon="lucide:chevron-right" width="18" height="18" />
-          </div>
-        </template>
-      </van-cell>
+            <template #label>
+              <div class="workout-date">
+                {{ formatDate(w.finished_at || w.started_at) }}
+              </div>
+            </template>
 
-      <!-- Инлайн-кнопка перехода ко всей истории -->
-      <van-cell
-        v-ripple
-        class="history-cell"
-        @click="handleHistoryClick"
-      >
-        <template #title>
-          <div class="history-content">
-            <span>Вся история</span>
-            <Icon icon="lucide:history" width="16" height="16" />
-          </div>
-        </template>
-      </van-cell>
-    </van-cell-group>
+            <template #right-icon>
+              <div class="workout-icon">
+                <Icon icon="lucide:chevron-right" width="18" height="18" />
+              </div>
+            </template>
+          </van-cell>
+
+          <!-- Инлайн-кнопка перехода ко всей истории -->
+          <van-cell v-ripple class="history-cell" @click="handleHistoryClick">
+            <template #title>
+              <div class="history-content">
+                <span>Вся история</span>
+                <Icon icon="lucide:history" width="16" height="16" />
+              </div>
+            </template>
+          </van-cell>
+        </van-cell-group>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -189,5 +205,70 @@ function handleHistoryClick() {
   text-align: center;
   color: var(--tg-theme-hint-color, #8e8e93);
   font-size: 14px;
+}
+
+/* --- Скелетон анимация и стили --- */
+.skeleton-line {
+  /* Базовый цвет основываем на теме Telegram, а сверху накладываем градиентную волну */
+  background: linear-gradient(
+    90deg,
+    var(--tg-theme-secondary-bg-color, rgba(255, 255, 255, 0.05)) 25%,
+    var(--tg-theme-hint-color, rgba(255, 255, 255, 0.15)) 37%,
+    var(--tg-theme-secondary-bg-color, rgba(255, 255, 255, 0.05)) 63%
+  );
+  background-size: 400% 100%;
+  animation: skeleton-shimmer 1.4s ease infinite;
+  border-radius: 6px;
+  /* Для мягкого смешивания с фоном карточки */
+  opacity: 0.6;
+}
+
+.skeleton-title {
+  width: 120px;
+  height: 14px;
+}
+
+.skeleton-date {
+  width: 80px;
+  height: 12px;
+  margin-top: 6px;
+}
+
+.skeleton-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+}
+
+.skeleton-history {
+  width: 100px;
+  height: 14px;
+  margin: 0 auto;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
+
+/* --- Плавные анимации смены состояний --- */
+.fade-expand-enter-active,
+.fade-expand-leave-active {
+  transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fade-expand-enter-from {
+  opacity: 0;
+  transform: translateY(-4px) scale(0.99);
+}
+
+.fade-expand-leave-to {
+  opacity: 0;
+  transform: translateY(4px) scale(0.99);
 }
 </style>
