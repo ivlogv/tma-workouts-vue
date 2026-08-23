@@ -222,7 +222,7 @@ async function handleMainButtonClick() {
     try {
       if (mainButton.isMounted()) mainButton.showLoader();
       const session = await workoutStore.startWorkoutFromPlan(planId.value);
-      router.push(`/workout/${session.id}`);
+      router.push(`/workouts/${session.id}`);
     } catch (e) {
       showToast({ message: "Не удалось начать тренировку", position: "top" });
     } finally {

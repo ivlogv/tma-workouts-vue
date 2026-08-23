@@ -7,7 +7,7 @@ import axios from "axios";
 
 import AppPage from "@/components/AppPage.vue";
 import ScreenHeader from "@/components/ScreenHeader.vue";
-import BottomNav from "@/components/BottomNav.vue";
+// import BottomNav from "@/components/BottomNav.vue";
 import StatBlock from "@/components/StatBlock.vue";
 import RecentWorkouts from "@/components/RecentWorkouts.vue";
 import ActiveWorkoutCard from "@/components/ActiveWorkoutCard.vue";
@@ -33,13 +33,13 @@ const thisWeek = ref(5);
 const totalWorkouts = ref(128); // Новое поле: всего тренировок
 const avgDuration = ref(45);
 
-const activeWorkout = ref({
-  id: 101,
-  name: "Full Body Beginner",
-  duration: "18:40",
-  completedExercises: 2,
-  totalExercises: 5,
-});
+// const activeWorkout = ref({
+//   id: 101,
+//   name: "Full Body Beginner",
+//   duration: "18:40",
+//   completedExercises: 2,
+//   totalExercises: 5,
+// });
 
 // Достаём имя пользователя из initData Telegram
 const userName = computed(() => {
@@ -118,8 +118,8 @@ function toggleSelect(id: number) {
 
 function handleStart() {
   triggerHaptic("medium");
-  if (activeWorkout.value) {
-    router.push(`/workouts/active`);
+  if (workoutStore.activeSession) {
+    router.push(`/workouts/${workoutStore.activeSession.id}`);
   } else if (selectedId.value) {
     triggerHaptic("medium");
     router.push(`/workouts/${selectedId.value}`);
@@ -130,7 +130,7 @@ function handleStart() {
 
 function handleContinueActive() {
   if (workoutStore.activeSession) {
-    router.push(`/workout/${workoutStore.activeSession.id}`);
+    router.push(`/workouts/${workoutStore.activeSession.id}`);
   }
 }
 
@@ -143,7 +143,7 @@ async function handlePlanClick(id: string | number) {
   triggerHaptic("light");
   try {
     const session = await workoutStore.startWorkoutFromPlan(id as number);
-    router.push(`/workout/${session.id}`);
+    router.push(`/plans/${session.id}`);
   } catch {
     // Ошибка обработана в сторе
   }

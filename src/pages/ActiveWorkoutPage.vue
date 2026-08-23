@@ -194,6 +194,7 @@ async function handleFinishWorkout() {
     router.replace("/history");
   } catch (e) {
     showToast({ message: "Не удалось сохранить тренировку", position: "top" });
+    console.error("Ошибка завершения тренировки:", e);
     startTimer();
   } finally {
     if (mainButton.isMounted()) mainButton.hideLoader();
